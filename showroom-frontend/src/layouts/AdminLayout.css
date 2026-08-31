@@ -1,0 +1,679 @@
+/* =========================================================
+   ADMIN LAYOUT
+   ========================================================= */
+
+.admin-layout {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #172033;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.admin-dashboard-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  min-height: 72px;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 30px;
+
+  background: #ffffff;
+
+  border-bottom: 1px solid #e6eaf0;
+
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.admin-header-left {
+  width: 220px;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  flex-shrink: 0;
+}
+
+.admin-brand-mark {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #172033;
+  color: #ffffff;
+
+  box-shadow: 0 3px 8px rgba(23, 32, 51, 0.18);
+}
+
+.admin-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.admin-brand-text strong {
+  color: #172033;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  line-height: 1.2;
+}
+
+.admin-brand-text span {
+  color: #94a3b8;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.6px;
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.admin-main-nav {
+  flex: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  height: 72px;
+}
+
+.admin-nav-link {
+  position: relative;
+
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 15px;
+
+  border-radius: 9px;
+
+  color: #64748b;
+
+  text-decoration: none;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-nav-link svg {
+  flex-shrink: 0;
+}
+
+.admin-nav-link:hover {
+  background: #f1f5f9;
+  color: #172033;
+
+  transform: translateY(-1px);
+}
+
+/* ACTIVE NAV */
+
+.admin-nav-link.active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.admin-nav-link.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 12px;
+  right: 12px;
+  bottom: -15px;
+
+  height: 3px;
+
+  border-radius: 3px 3px 0 0;
+
+  background: #2563eb;
+}
+
+/* =========================================================
+   HEADER ACTIONS
+   ========================================================= */
+
+.admin-header-actions {
+  width: 220px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   ADMIN PROFILE
+   ========================================================= */
+
+.admin-profile {
+  min-height: 42px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 4px 11px 4px 6px;
+
+  border: 1px solid #e5eaf1;
+  border-radius: 10px;
+
+  background: #f8fafc;
+}
+
+.admin-profile-icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  background: #e8eef8;
+  color: #52647d;
+}
+
+.admin-profile-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.admin-profile-info strong {
+  max-width: 110px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #334155;
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.admin-profile-info span {
+  color: #94a3b8;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+.admin-header-logout {
+  width: 42px;
+  height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e5eaf1;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.admin-header-logout:hover {
+  background: #fff1f2;
+  border-color: #fecdd3;
+
+  color: #dc2626;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.admin-layout-content {
+  width: 100%;
+  min-height: calc(100vh - 72px);
+
+  box-sizing: border-box;
+
+  padding: 30px 32px 50px;
+}
+
+/* =========================================================
+   ADMIN PAGE COMMON
+   ========================================================= */
+
+.admin-page {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .admin-header-left,
+  .admin-header-actions {
+    width: 180px;
+  }
+
+  .admin-nav-link {
+    padding: 0 11px;
+  }
+}
+
+@media (max-width: 900px) {
+
+  .admin-dashboard-header {
+    padding: 0 20px;
+  }
+
+  .admin-header-left {
+    width: auto;
+  }
+
+  .admin-main-nav {
+    justify-content: flex-start;
+
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .admin-main-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-nav-link {
+    flex-shrink: 0;
+  }
+
+  .admin-header-actions {
+    width: auto;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .admin-dashboard-header {
+    min-height: 64px;
+    padding: 0 14px;
+  }
+
+  .admin-main-nav {
+    height: 64px;
+  }
+
+  .admin-brand-text {
+    display: none;
+  }
+
+  .admin-nav-link {
+    width: 40px;
+    height: 40px;
+
+    padding: 0;
+  }
+
+  .admin-nav-link.active::after {
+    bottom: -12px;
+  }
+
+  .admin-profile {
+    padding: 4px;
+    border: 0;
+    background: transparent;
+  }
+
+  .admin-profile-info {
+    display: none;
+  }
+
+  .admin-profile-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .admin-header-logout {
+    width: 36px;
+    height: 36px;
+  }
+
+  .admin-layout-content {
+    min-height: calc(100vh - 64px);
+
+    padding: 22px 16px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .admin-dashboard-header {
+    gap: 6px;
+  }
+
+  .admin-header-left {
+    flex-shrink: 0;
+  }
+
+  .admin-main-nav {
+    gap: 2px;
+  }
+
+  .admin-nav-link {
+    width: 36px;
+  }
+
+  .admin-header-actions {
+    gap: 5px;
+  }
+}
+/* =========================================================
+   ADMIN TEST RIDES
+   ========================================================= */
+
+.admin-test-rides-page {
+  width: 100%;
+}
+
+
+/* ================= CUSTOMER ================= */
+
+.admin-test-ride-customer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+}
+
+.admin-test-ride-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.admin-test-ride-customer div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-test-ride-customer strong {
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-test-ride-customer span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+
+/* ================= VEHICLE ================= */
+
+.admin-test-ride-vehicle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 150px;
+}
+
+.admin-test-ride-vehicle-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #f8fafc;
+  color: #475569;
+
+  border: 1px solid #e2e8f0;
+}
+
+.admin-test-ride-vehicle div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-test-ride-vehicle strong {
+  color: #1e293b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-test-ride-vehicle span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+
+/* ================= APPOINTMENT ================= */
+
+.admin-test-ride-date {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  min-width: 135px;
+}
+
+.admin-test-ride-date strong,
+.admin-test-ride-date span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-test-ride-date strong {
+  color: #1e293b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-test-ride-date span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+
+/* ================= CONTACT ================= */
+
+.admin-test-ride-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  min-width: 180px;
+}
+
+.admin-test-ride-contact span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  max-width: 210px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #475569;
+  font-size: 11px;
+}
+
+.admin-test-ride-contact svg {
+  flex-shrink: 0;
+  color: #64748b;
+}
+
+
+/* ================= STATUS ================= */
+
+.admin-test-ride-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+
+  white-space: nowrap;
+}
+
+.admin-test-ride-status.pending {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.admin-test-ride-status.confirmed {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.admin-test-ride-status.completed {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.admin-test-ride-status.cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+
+/* ================= MESSAGE ================= */
+
+.admin-test-ride-message {
+  display: block;
+
+  max-width: 180px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #64748b;
+
+  font-size: 11px;
+}
+
+
+/* ================= TABLE ================= */
+
+.admin-test-rides-table {
+  min-width: 1100px;
+}
+
+.admin-test-rides-table th {
+  white-space: nowrap;
+}
+
+.admin-test-rides-table td {
+  vertical-align: middle;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 900px) {
+
+  .admin-test-rides-page
+  .admin-filter-card {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 640px) {
+
+  .admin-test-rides-page
+  .admin-page-header {
+    align-items: flex-start;
+  }
+
+}

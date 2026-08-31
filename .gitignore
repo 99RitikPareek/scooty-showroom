@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+
+# Java / Spring Boot
+backend/target/
+backend/.idea/
+backend/*.iml
+
+# Node / React
+showroom-frontend/node_modules/
+showroom-frontend/dist/
+showroom-frontend/build/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.iml
+backend/showroom-backend.zip
+showroom-frontend/public/videos/*.webm
