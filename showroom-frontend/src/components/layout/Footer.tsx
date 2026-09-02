@@ -84,10 +84,42 @@ const Footer = () => {
           Pvt. Ltd. All rights reserved.
         </div>
 
-        <div className="footer-bottom-links">
-          <span>SHRI HARI SUZUKI</span>
-          <span>•</span>
-          <span>Trusted Suzuki Dealer</span>
+        <div className="footer-developer-credit" style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.88rem", color: "#e2e8f0", flexWrap: "wrap", justifyContent: "center" }}>
+          <span>Designed &amp; Developed by</span>
+          <a
+            href="mailto:Ritikpareek923@gmail.com"
+            style={{
+              color: "#ffffff",
+              fontWeight: 600,
+              textDecoration: "none",
+              borderBottom: "1px dashed #E60012",
+              paddingBottom: "1px",
+              transition: "all 0.2s ease",
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.color = "#E60012";
+              e.currentTarget.style.borderBottomStyle = "solid";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.color = "#ffffff";
+              e.currentTarget.style.borderBottomStyle = "dashed";
+            }}
+          >
+            Ritik Pareek
+          </a>
+          <a
+            href="mailto:Ritikpareek923@gmail.com"
+            style={{
+              color: "#94a3b8",
+              fontSize: "0.82rem",
+              textDecoration: "none",
+              transition: "color 0.2s ease",
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.color = "#cbd5e1")}
+            onMouseOut={(e) => (e.currentTarget.style.color = "#94a3b8")}
+          >
+            (Ritikpareek923@gmail.com)
+          </a>
         </div>
       </div>
     </footer>
