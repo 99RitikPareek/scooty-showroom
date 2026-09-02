@@ -92,17 +92,17 @@ const Footer = () => {
               color: "#ffffff",
               fontWeight: 600,
               textDecoration: "none",
-              borderBottom: "1px dashed #E60012",
+              borderBottom: "none",
               paddingBottom: "1px",
               transition: "all 0.2s ease",
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.color = "#E60012";
-              e.currentTarget.style.borderBottomStyle = "solid";
+              
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.color = "#ffffff";
-              e.currentTarget.style.borderBottomStyle = "dashed";
+              
             }}
           >
             Ritik Pareek
