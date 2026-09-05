@@ -9170,3 +9170,136 @@ select {
 .vehicle-card:hover .vehicle-card-image img {
   transform: scale(1.05);
 }
+
+
+/* =========================================================
+   CATEGORY FILTER PILLS & SHOWCASE CARDS
+========================================================= */
+
+.category-filter-pills-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.category-pill:hover {
+  border-color: #E60012;
+  color: #E60012;
+  transform: translateY(-2px);
+}
+
+.category-pill.active {
+  background: linear-gradient(135deg, #E60012 0%, #B3000E 100%);
+  color: #ffffff;
+  border-color: #E60012;
+  box-shadow: 0 6px 18px rgba(230, 0, 18, 0.25);
+}
+
+/* Category Showcase Section */
+.category-showcase-section {
+  background: #f8fafc;
+  padding: 60px 0;
+}
+
+.category-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 36px;
+}
+
+.category-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  border-color: #E60012;
+}
+
+.category-card-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.scooter-card .category-card-badge { background: #e0f2fe; color: #0369a1; }
+.bike-card .category-card-badge { background: #fef3c7; color: #b45309; }
+.ev-card .category-card-badge { background: #dcfce7; color: #15803d; }
+
+.category-card-icon {
+  font-size: 2.8rem;
+  margin-bottom: 16px;
+}
+
+.category-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.category-card p {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.category-card-features {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+  font-size: 0.88rem;
+  color: #334155;
+}
+
+.category-card-btn {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #E60012;
+  font-size: 0.98rem;
+  transition: gap 0.2s ease;
+}
+
+.category-card:hover .category-card-btn {
+  gap: 12px;
+}

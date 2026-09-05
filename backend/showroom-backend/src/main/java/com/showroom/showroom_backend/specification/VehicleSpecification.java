@@ -24,7 +24,8 @@ public class VehicleSpecification {
             BigDecimal maxPrice,
             Boolean available,
             Boolean featured,
-            String fuelType) {
+            String fuelType,
+            String category) {
 
         return (root, query, criteriaBuilder) -> {
 
@@ -140,6 +141,39 @@ public class VehicleSpecification {
                                 fuelType.trim().toLowerCase()
                         )
                 );
+            }
+
+            
+            // Category filter
+            if (category != null && !category.trim().isEmpty()) {
+                String catUpper = category.trim().toUpperCase();
+                if ("ELECTRIC".equals(catUpper) || "EV".equals(catUpper)) {
+                    Predicate catMatch = criteriaBuilder.equal(criteriaBuilder.upper(root.get("category")), "ELECTRIC");
+                    Predicate fuelMatch = criteriaBuilder.like(criteriaBuilder.upper(root.get("fuelType")), "%ELECTRIC%");
+                    Predicate evMatch = criteriaBuilder.like(criteriaBuilder.upper(root.get("fuelType")), "%EV%");
+                    predicates.add(criteriaBuilder.or(catMatch, fuelMatch, evMatch));
+                } else if ("BIKE".equals(catUpper)) {
+                    Predicate catMatch = criteriaBuilder.equal(criteriaBuilder.upper(root.get("category")), "BIKE");
+                    Predicate gixxer = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%GIXXER%");
+                    Predicate strom = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%STROM%");
+                    Predicate hayabusa = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%HAYABUSA%");
+                    Predicate katana = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%KATANA%");
+                    Predicate intruder = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%INTRUDER%");
+                    predicates.add(criteriaBuilder.or(catMatch, gixxer, strom, hayabusa, katana, intruder));
+                } else if ("SCOOTER".equals(catUpper) || "SCOOTY".equals(catUpper)) {
+                    Predicate catMatch = criteriaBuilder.equal(criteriaBuilder.upper(root.get("category")), "SCOOTER");
+                    Predicate gixxer = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%GIXXER%");
+                    Predicate strom = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%STROM%");
+                    Predicate hayabusa = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%HAYABUSA%");
+                    Predicate katana = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%KATANA%");
+                    Predicate intruder = criteriaBuilder.like(criteriaBuilder.upper(root.get("name")), "%INTRUDER%");
+                    Predicate fuelEv = criteriaBuilder.like(criteriaBuilder.upper(root.get("fuelType")), "%ELECTRIC%");
+                    
+                    Predicate notBikeOrEv = criteriaBuilder.not(criteriaBuilder.or(gixxer, strom, hayabusa, katana, intruder, fuelEv));
+                    predicates.add(criteriaBuilder.or(catMatch, notBikeOrEv));
+                } else {
+                    predicates.add(criteriaBuilder.equal(criteriaBuilder.upper(root.get("category")), catUpper));
+                }
             }
 
             return criteriaBuilder.and(

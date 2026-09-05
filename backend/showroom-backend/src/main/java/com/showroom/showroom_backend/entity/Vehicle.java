@@ -29,6 +29,9 @@ public class Vehicle {
     @Column(name = "vehicle_type", nullable = false, length = 20)
     private VehicleType vehicleType;
 
+    @Column(length = 30)
+    private String category;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private java.math.BigDecimal price;
 
@@ -134,6 +137,14 @@ public class Vehicle {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public VehicleType getVehicleType() {

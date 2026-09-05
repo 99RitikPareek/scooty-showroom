@@ -3,10 +3,12 @@ import { Search, SlidersHorizontal, X } from "lucide-react";
 interface VehicleFiltersProps {
   search: string;
   type: string;
+  category: string;
   fuelType: string;
   sortBy: string;
   onSearchChange: (value: string) => void;
   onTypeChange: (value: string) => void;
+  onCategoryChange: (value: string) => void;
   onFuelTypeChange: (value: string) => void;
   onSortChange: (value: string) => void;
   onClear: () => void;
@@ -15,10 +17,12 @@ interface VehicleFiltersProps {
 const VehicleFilters = ({
   search,
   type,
+  category,
   fuelType,
   sortBy,
   onSearchChange,
   onTypeChange,
+  onCategoryChange,
   onFuelTypeChange,
   onSortChange,
   onClear,
@@ -26,6 +30,7 @@ const VehicleFilters = ({
   const hasFilters =
     search.trim() !== "" ||
     type !== "" ||
+    category !== "" ||
     fuelType !== "" ||
     sortBy !== "";
 
@@ -76,6 +81,24 @@ const VehicleFilters = ({
 
       {/* FILTERS */}
       <div className="vehicle-filter-row">
+
+        {/* CATEGORY */}
+        <div className="filter-field">
+          <label htmlFor="vehicle-category">
+            Category
+          </label>
+
+          <select
+            id="vehicle-category"
+            value={category}
+            onChange={(e) => onCategoryChange(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            <option value="SCOOTER">🛵 Scooty / Scooter</option>
+            <option value="BIKE">🏍️ Bike / Motorcycle</option>
+            <option value="ELECTRIC">⚡ EV / Electric</option>
+          </select>
+        </div>
 
         {/* VEHICLE TYPE */}
         <div className="filter-field">

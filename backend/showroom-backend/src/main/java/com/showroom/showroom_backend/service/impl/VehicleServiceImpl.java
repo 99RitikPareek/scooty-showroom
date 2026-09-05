@@ -380,6 +380,7 @@ public class VehicleServiceImpl implements VehicleService {
             Boolean available,
             Boolean featured,
             String fuelType,
+            String category,
             int page,
             int size,
             String sortBy,
@@ -456,7 +457,8 @@ public class VehicleServiceImpl implements VehicleService {
                 maxPrice,
                 available,
                 featured,
-                fuelType
+                fuelType,
+                category
         );
 
         Page<VehicleResponse> vehiclePage = vehicleRepository
@@ -529,6 +531,7 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setTransmission(request.getTransmission());
         vehicle.setColor(request.getColor());
         vehicle.setDescription(request.getDescription());
+        vehicle.setCategory(request.getCategory());
 
         vehicle.setFeatured(
                 request.getFeatured() != null
@@ -577,6 +580,21 @@ public class VehicleServiceImpl implements VehicleService {
         response.setModel(vehicle.getModel());
         response.setVariant(vehicle.getVariant());
         response.setVehicleType(vehicle.getVehicleType());
+
+        // Smart Category Fallback
+        String cat = vehicle.getCategory();
+        if (cat == null || cat.trim().isEmpty()) {
+            String fuel = vehicle.getFuelType() != null ? vehicle.getFuelType().toUpperCase() : "";
+            String name = vehicle.getName() != null ? vehicle.getName().toUpperCase() : "";
+            if (fuel.contains("ELECTRIC") || fuel.contains("EV") || name.contains("EV") || name.contains("ELECTRIC")) {
+                cat = "ELECTRIC";
+            } else if (name.contains("GIXXER") || name.contains("STROM") || name.contains("HAYABUSA") || name.contains("KATANA") || name.contains("INTRUDER") || name.contains("BIKE")) {
+                cat = "BIKE";
+            } else {
+                cat = "SCOOTER";
+            }
+        }
+        response.setCategory(cat);
 
         response.setPrice(vehicle.getPrice());
         response.setEngineCc(vehicle.getEngineCc());

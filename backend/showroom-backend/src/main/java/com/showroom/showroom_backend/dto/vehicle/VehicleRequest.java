@@ -25,6 +25,9 @@ public class VehicleRequest {
     @NotNull(message = "Vehicle type is required")
     private VehicleType vehicleType;
 
+    @Size(max = 30, message = "Category cannot exceed 30 characters")
+    private String category;
+
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     private BigDecimal price;
@@ -102,6 +105,14 @@ public class VehicleRequest {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public VehicleType getVehicleType() {

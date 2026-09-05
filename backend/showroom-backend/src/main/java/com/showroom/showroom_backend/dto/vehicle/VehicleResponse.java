@@ -18,6 +18,7 @@ public class VehicleResponse {
     private String model;
     private String variant;
     private VehicleType vehicleType;
+    private String category;
 
     private BigDecimal price;
     private Integer engineCc;
@@ -91,6 +92,14 @@ public class VehicleResponse {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public VehicleType getVehicleType() {

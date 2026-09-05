@@ -18,6 +18,7 @@ export interface Vehicle {
   variant?: string | null;
 
   vehicleType: VehicleType;
+  category?: string;
 
   price: number;
   engineCc?: number | null;
@@ -49,6 +50,7 @@ export interface VehicleFilters {
   keyword?: string;
   brandId?: number;
   vehicleType?: VehicleType;
+  category?: string;
   minPrice?: number;
   maxPrice?: number;
   available?: boolean;
@@ -77,6 +79,7 @@ export interface VehicleRequest {
   model: string;
   variant?: string;
   vehicleType: VehicleType;
+  category?: string;
 
   price: number;
   engineCc?: number;

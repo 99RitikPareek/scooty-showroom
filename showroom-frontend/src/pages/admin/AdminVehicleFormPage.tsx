@@ -35,6 +35,7 @@ const initialForm: VehicleRequest = {
   model: "",
   variant: "",
   vehicleType: "NEW",
+  category: "",
   price: 0,
   engineCc: undefined,
   mileage: undefined,
@@ -104,6 +105,7 @@ const AdminVehicleFormPage = () => {
             model: vehicle.model,
             variant: vehicle.variant ?? "",
             vehicleType: vehicle.vehicleType,
+            category: vehicle.category ?? "",
             price: Number(vehicle.price),
             engineCc: vehicle.engineCc ?? undefined,
             mileage: vehicle.mileage ?? undefined,
@@ -295,6 +297,7 @@ const AdminVehicleFormPage = () => {
       model: form.model.trim(),
       variant: form.variant?.trim() || undefined,
       fuelType: form.fuelType?.trim() || undefined,
+      category: form.category?.trim() || undefined,
       transmission: form.transmission?.trim() || undefined,
       color: form.color?.trim() || undefined,
       description: form.description?.trim() || undefined,
@@ -539,6 +542,22 @@ const AdminVehicleFormPage = () => {
               >
                 <option value="NEW">New Vehicle</option>
                 <option value="USED">Pre-Owned Vehicle</option>
+              </select>
+            </div>
+
+            {/* CATEGORY */}
+            <div className="admin-form-group">
+              <label htmlFor="category">Category (Scooty / Bike / EV)</label>
+              <select
+                id="category"
+                name="category"
+                value={form.category ?? ""}
+                onChange={handleChange}
+              >
+                <option value="">Auto-Detect (Scooty/Bike/EV)</option>
+                <option value="SCOOTER">🛵 Scooty / Scooter</option>
+                <option value="BIKE">🏍️ Bike / Motorcycle</option>
+                <option value="ELECTRIC">⚡ EV / Electric Vehicle</option>
               </select>
             </div>
 

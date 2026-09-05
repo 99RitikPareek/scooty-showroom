@@ -21,6 +21,7 @@ const VehiclesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const urlType = searchParams.get("type");
+  const urlCategory = searchParams.get("category");
 
   const type =
     urlType === "NEW" || urlType === "USED"
@@ -35,6 +36,7 @@ const VehiclesPage = () => {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"" | "NEW" | "USED" >(type ?? "");
 
+  const [category, setCategory] = useState(urlCategory || "");
   const [fuelType, setFuelType] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
@@ -42,8 +44,10 @@ const VehiclesPage = () => {
 const clearFilters = () => {
   setSearch("");
   setFilterType("");
+  setCategory("");
   setFuelType("");
   setSortBy("");
+  setSearchParams({});
 };
 
   // Pagination
@@ -70,6 +74,7 @@ const clearFilters = () => {
             ? filterType
             : undefined,
 
+        category: category || undefined,
         fuelType: fuelType || undefined,
 
         page,
@@ -102,6 +107,7 @@ const clearFilters = () => {
   }, [
     search,
     filterType,
+    category,
     fuelType,
     page,
     sortBy,
@@ -120,8 +126,23 @@ const clearFilters = () => {
 
   useEffect(() => {
     setFilterType(type ?? "");
+    if (urlCategory) {
+      setCategory(urlCategory);
+    }
     setPage(0);
-  }, [type]);
+  }, [type, urlCategory]);
+
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+    setPage(0);
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set("category", value);
+    } else {
+      newParams.delete("category");
+    }
+    setSearchParams(newParams);
+  };
 
   /*
    * ============================================================
@@ -365,10 +386,44 @@ const clearFilters = () => {
               SEARCH + FILTERS
           ================================================== */}
 
+          {/* CATEGORY FILTER PILLS */}
+          <div className="category-filter-pills-bar">
+            <button
+              type="button"
+              className={`category-pill ${!category ? 'active' : ''}`}
+              onClick={() => handleCategoryChange("")}
+            >
+              All Vehicles
+            </button>
+            <button
+              type="button"
+              className={`category-pill ${category === 'SCOOTER' ? 'active' : ''}`}
+              onClick={() => handleCategoryChange("SCOOTER")}
+            >
+              🛵 Scooty / Scooters
+            </button>
+            <button
+              type="button"
+              className={`category-pill ${category === 'BIKE' ? 'active' : ''}`}
+              onClick={() => handleCategoryChange("BIKE")}
+            >
+              🏍️ Bikes / Motorcycles
+            </button>
+            <button
+              type="button"
+              className={`category-pill ${category === 'ELECTRIC' ? 'active' : ''}`}
+              onClick={() => handleCategoryChange("ELECTRIC")}
+            >
+              ⚡ EV / Electric
+            </button>
+          </div>
+
           <VehicleFilters
             search={search}
             type={filterType}
+            category={category}
             fuelType={fuelType}
+            onCategoryChange={handleCategoryChange}
             sortBy={
               sortBy === "price" && sortDir === "asc"
                 ? "price-asc"
