@@ -9141,3 +9141,32 @@ select {
   font-size: 0.92rem;
   font-weight: 600;
 }
+
+/* Clickable Image & Title Styling for VehicleCard */
+.vehicle-card-image-link {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.vehicle-card-title-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.vehicle-card-title-link:hover {
+  color: #E60012;
+}
+
+.vehicle-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.vehicle-card:hover .vehicle-card-image img {
+  transform: scale(1.05);
+}
