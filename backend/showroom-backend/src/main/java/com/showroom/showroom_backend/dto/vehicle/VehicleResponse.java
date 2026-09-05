@@ -19,6 +19,8 @@ public class VehicleResponse {
     private String variant;
     private VehicleType vehicleType;
     private String category;
+    private String featuresJson;
+    private String specificationsJson;
 
     private BigDecimal price;
     private Integer engineCc;
@@ -92,6 +94,22 @@ public class VehicleResponse {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getFeaturesJson() {
+        return featuresJson;
+    }
+
+    public void setFeaturesJson(String featuresJson) {
+        this.featuresJson = featuresJson;
+    }
+
+    public String getSpecificationsJson() {
+        return specificationsJson;
+    }
+
+    public void setSpecificationsJson(String specificationsJson) {
+        this.specificationsJson = specificationsJson;
     }
 
     public String getCategory() {

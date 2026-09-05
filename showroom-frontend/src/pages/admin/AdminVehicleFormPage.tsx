@@ -11,6 +11,8 @@ import {
   Upload,
   X,
   AlertCircle,
+  Plus,
+  Sparkles,
 } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -62,6 +64,7 @@ const AdminVehicleFormPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<VehicleRequest>(initialForm);
+  const [featuresList, setFeaturesList] = useState<Array<{ id: string; title: string; description: string }>>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [existingImages, setExistingImages] = useState<VehicleImage[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<SelectedFileItem[]>([]);
@@ -99,6 +102,20 @@ const AdminVehicleFormPage = () => {
 
         if (vehicleId) {
           const vehicle = await vehicleService.getById(vehicleId);
+          if (vehicle.featuresJson) {
+            try {
+              const parsed = JSON.parse(vehicle.featuresJson);
+              if (Array.isArray(parsed)) {
+                setFeaturesList(parsed.map((item, idx) => ({
+                  id: String(idx + 1),
+                  title: item.title || "",
+                  description: item.description || "",
+                })));
+              }
+            } catch (e) {
+              console.error("Failed to parse featuresJson:", e);
+            }
+          }
           setForm({
             brandId: vehicle.brandId,
             name: vehicle.name,
@@ -115,6 +132,8 @@ const AdminVehicleFormPage = () => {
             description: vehicle.description ?? "",
             featured: vehicle.featured,
             available: vehicle.available,
+            featuresJson: vehicle.featuresJson ?? "",
+            specificationsJson: vehicle.specificationsJson ?? "",
             registrationYear: vehicle.registrationYear ?? undefined,
             ownerCount: vehicle.ownerCount ?? undefined,
             kilometersDriven: vehicle.kilometersDriven ?? undefined,
@@ -575,6 +594,102 @@ const AdminVehicleFormPage = () => {
                 required
               />
             </div>
+          </div>
+        </section>
+
+        {/* CUSTOM VEHICLE FEATURES (DYNAMIC FOR OFFICIAL SUZUKI LAYOUT) */}
+        <section className="admin-form-card">
+          <div className="admin-form-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="admin-form-card-icon" style={{ background: '#fee2e2', color: '#E60012' }}>
+                <Sparkles size={20} />
+              </div>
+              <div>
+                <h2>Custom Vehicle Features</h2>
+                <p>Add specific features (Title & Description) to display on public vehicle details page.</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ fontSize: '0.88rem', padding: '8px 14px' }}
+              onClick={() => {
+                setFeaturesList([
+                  ...featuresList,
+                  { id: Date.now().toString(), title: "", description: "" },
+                ]);
+              }}
+            >
+              <Plus size={16} /> Add Feature
+            </button>
+          </div>
+
+          <div className="admin-features-builder-list" style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {featuresList.length === 0 && (
+              <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                No custom features added yet. Click "+ Add Feature" to add specific features for this vehicle.
+              </p>
+            )}
+
+            {featuresList.map((item, index) => (
+              <div
+                key={item.id}
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  position: 'relative',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Feature #{index + 1}</strong>
+                  <button
+                    type="button"
+                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+                    onClick={() => {
+                      setFeaturesList(featuresList.filter((f) => f.id !== item.id));
+                    }}
+                    title="Remove feature"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>Feature Title</label>
+                    <input
+                      type="text"
+                      className="admin-form-input"
+                      placeholder="e.g. Twin Muffler Exhaust"
+                      value={item.title}
+                      onChange={(e) => {
+                        const updated = [...featuresList];
+                        updated[index].title = e.target.value;
+                        setFeaturesList(updated);
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '4px' }}>Short Description</label>
+                    <input
+                      type="text"
+                      className="admin-form-input"
+                      placeholder="e.g. Sporty twin-pipe exhaust system for deep rumble"
+                      value={item.description}
+                      onChange={(e) => {
+                        const updated = [...featuresList];
+                        updated[index].description = e.target.value;
+                        setFeaturesList(updated);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

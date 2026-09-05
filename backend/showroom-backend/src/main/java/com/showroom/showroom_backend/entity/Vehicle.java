@@ -32,6 +32,12 @@ public class Vehicle {
     @Column(length = 30)
     private String category;
 
+    @Column(name = "features_json", columnDefinition = "LONGTEXT")
+    private String featuresJson;
+
+    @Column(name = "specifications_json", columnDefinition = "LONGTEXT")
+    private String specificationsJson;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private java.math.BigDecimal price;
 
@@ -137,6 +143,22 @@ public class Vehicle {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getFeaturesJson() {
+        return featuresJson;
+    }
+
+    public void setFeaturesJson(String featuresJson) {
+        this.featuresJson = featuresJson;
+    }
+
+    public String getSpecificationsJson() {
+        return specificationsJson;
+    }
+
+    public void setSpecificationsJson(String specificationsJson) {
+        this.specificationsJson = specificationsJson;
     }
 
     public String getCategory() {

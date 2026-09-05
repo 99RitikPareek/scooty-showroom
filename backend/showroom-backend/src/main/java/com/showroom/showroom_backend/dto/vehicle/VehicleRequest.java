@@ -27,6 +27,8 @@ public class VehicleRequest {
 
     @Size(max = 30, message = "Category cannot exceed 30 characters")
     private String category;
+    private String featuresJson;
+    private String specificationsJson;
 
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
@@ -105,6 +107,22 @@ public class VehicleRequest {
 
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+
+    public String getFeaturesJson() {
+        return featuresJson;
+    }
+
+    public void setFeaturesJson(String featuresJson) {
+        this.featuresJson = featuresJson;
+    }
+
+    public String getSpecificationsJson() {
+        return specificationsJson;
+    }
+
+    public void setSpecificationsJson(String specificationsJson) {
+        this.specificationsJson = specificationsJson;
     }
 
     public String getCategory() {

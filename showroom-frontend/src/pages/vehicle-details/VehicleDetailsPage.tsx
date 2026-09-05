@@ -14,17 +14,20 @@ import {
   Sparkles,
   Navigation,
   Lock,
-  Compass,
-  Cpu,
-  Calculator,
   Layers,
   FileText,
+  CheckCircle,
 } from "lucide-react";
 
 import VehicleSkeleton from "../../components/vehicle/VehicleSkeleton";
 import vehicleService from "../../services/vehicleService";
 import { getImageUrl } from "../../utils/imageUtils";
 import type { Vehicle } from "../../types/vehicle";
+
+interface CustomFeatureItem {
+  title: string;
+  description: string;
+}
 
 const VehicleDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +36,7 @@ const VehicleDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"highlights" | "specs" | "emi">("highlights");
+  const [activeTab, setActiveTab] = useState<"highlights" | "specs">("highlights");
 
   useEffect(() => {
     const loadVehicle = async () => {
@@ -102,13 +105,20 @@ const VehicleDetailsPage = () => {
   const isEV = category === "ELECTRIC" || fuelTypeUpper.includes("ELECTRIC") || fuelTypeUpper.includes("EV");
   const isBike = category === "BIKE" || vehicle.name.toUpperCase().includes("GIXXER") || vehicle.name.toUpperCase().includes("STROM");
 
-  // Calculate estimated EMI (Assuming 80% loan amount for 36 months at 9.5% interest)
+  // Parse Admin Custom Features if present
+  let customFeatures: CustomFeatureItem[] = [];
+  if (vehicle.featuresJson) {
+    try {
+      const parsed = JSON.parse(vehicle.featuresJson);
+      if (Array.isArray(parsed)) {
+        customFeatures = parsed.filter(item => item && item.title);
+      }
+    } catch (e) {
+      console.error("Failed to parse featuresJson:", e);
+    }
+  }
+
   const priceNum = Number(vehicle.price) || 0;
-  const loanAmount = priceNum * 0.8;
-  const monthlyRate = 0.095 / 12;
-  const emiMonths = 36;
-  const estimatedEMI = Math.round((loanAmount * monthlyRate * Math.pow(1 + monthlyRate, emiMonths)) / (Math.pow(1 + monthlyRate, emiMonths) - 1));
-  const downPayment = Math.round(priceNum * 0.2);
 
   const whatsappMessage = encodeURIComponent(
     `Hello Shri Hari Suzuki! I am interested in ${vehicle.brandName} ${vehicle.name} (${vehicle.model || ''}). Please share best price offer and test ride availability.`
@@ -205,7 +215,7 @@ const VehicleDetailsPage = () => {
                 )}
               </div>
 
-              {/* PRICE & FINANCING CARD */}
+              {/* PRICE */}
               <div className="vehicle-detail-price-card">
                 <div>
                   <span className="price-label">Ex-Showroom Price</span>
@@ -215,9 +225,8 @@ const VehicleDetailsPage = () => {
                   </strong>
                 </div>
 
-                <div className="emi-badge">
-                  <span>Starting EMI</span>
-                  <strong>₹{estimatedEMI.toLocaleString("en-IN")}/mo*</strong>
+                <div className="showroom-location-badge" style={{ background: '#f1f5f9', padding: '6px 12px', borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600, color: '#475569' }}>
+                  📍 Guna Showroom
                 </div>
               </div>
 
@@ -302,14 +311,14 @@ const VehicleDetailsPage = () => {
 
               <div className="showroom-assurance-box">
                 <ShieldCheck size={20} />
-                <span>100% Genuine Suzuki Warranty • Instant Finance Available at Showroom</span>
+                <span>100% Genuine Suzuki Warranty • Instant Spot Finance at Showroom</span>
               </div>
 
             </div>
           </div>
 
           {/* =========================================================
-              RICH FEATURE SHOWCASE & INTERACTIVE TABS
+              OFFICIAL SUZUKI STYLE FEATURE SHOWCASE & SPECS TABS
              ========================================================= */}
           <div className="vehicle-feature-tabs-section">
 
@@ -321,7 +330,7 @@ const VehicleDetailsPage = () => {
                 onClick={() => setActiveTab("highlights")}
               >
                 <Sparkles size={18} />
-                Key Highlights & Features
+                Key Features & Highlights
               </button>
 
               <button
@@ -332,113 +341,90 @@ const VehicleDetailsPage = () => {
                 <FileText size={18} />
                 Technical Specifications
               </button>
-
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "emi" ? "active" : ""}`}
-                onClick={() => setActiveTab("emi")}
-              >
-                <Calculator size={18} />
-                EMI & Down Payment Calculator
-              </button>
             </div>
 
             {/* TAB CONTENT: HIGHLIGHTS */}
             {activeTab === "highlights" && (
               <div className="tab-content-panel">
-                <h3>Vehicle Features & Highlights</h3>
+                <h3>{customFeatures.length > 0 ? "Vehicle Specific Features" : "Key Highlights & Features"}</h3>
 
-                {/* CATEGORY SPECIFIC FEATURE CARDS */}
-                <div className="category-features-grid">
-
-                  {/* SCOOTY / SCOOTERS FEATURES */}
-                  {!isEV && !isBike && (
-                    <>
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Fuel size={24} /></div>
-                        <h4>Suzuki Eco Performance (SEP)</h4>
-                        <p>Advanced SEP engine technology delivers smooth acceleration while giving superior mileage up to {vehicle.mileage || 52} km/l.</p>
+                {/* ADMIN CUSTOM FEATURES GRID */}
+                {customFeatures.length > 0 ? (
+                  <div className="category-features-grid">
+                    {customFeatures.map((item, idx) => (
+                      <div key={idx} className="feature-highlight-card">
+                        <div className="feature-card-icon">
+                          <CheckCircle size={22} />
+                        </div>
+                        <h4>{item.title}</h4>
+                        <p>{item.description}</p>
                       </div>
+                    ))}
+                  </div>
+                ) : (
+                  /* DEFAULT CATEGORY FEATURES FALLBACK IF NO CUSTOM FEATURES FILLED BY ADMIN */
+                  <div className="category-features-grid">
+                    {!isEV && !isBike && (
+                      <>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><Fuel size={24} /></div>
+                          <h4>Suzuki Eco Performance (SEP)</h4>
+                          <p>Advanced SEP engine technology delivers smooth acceleration while giving superior mileage up to {vehicle.mileage || 52} km/l.</p>
+                        </div>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><Navigation size={24} /></div>
+                          <h4>Bluetooth Digital Console</h4>
+                          <p>Turn-by-turn navigation alerts, incoming call & SMS notifications right on your digital instrument cluster.</p>
+                        </div>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><Layers size={24} /></div>
+                          <h4>21.8L Large Storage</h4>
+                          <p>Spacious underseat storage with convenient front rack & USB mobile charging socket for easy riding.</p>
+                        </div>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><Lock size={24} /></div>
+                          <h4>One-Push Central Locking</h4>
+                          <p>Integrated central locking system with easy ignition start and secure shutter key protection.</p>
+                        </div>
+                      </>
+                    )}
 
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Navigation size={24} /></div>
-                        <h4>Bluetooth Digital Console</h4>
-                        <p>Turn-by-turn navigation alerts, incoming call & SMS notifications right on your digital instrument cluster.</p>
-                      </div>
+                    {!isEV && isBike && (
+                      <>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><Gauge size={24} /></div>
+                          <h4>Gixxer Performance SEP Engine</h4>
+                          <p>Derived from Suzuki GSX-R racing heritage, offering powerful throttle response and high-speed stability.</p>
+                        </div>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><ShieldCheck size={24} /></div>
+                          <h4>Dual Channel ABS Brakes</h4>
+                          <p>Advanced Anti-Lock Braking System with twin disc brakes for unmatched emergency stopping power and control.</p>
+                        </div>
+                        <div className="feature-highlight-card">
+                          <div className="feature-card-icon"><Sparkles size={24} /></div>
+                          <h4>Aerodynamic Sport Styling</h4>
+                          <p>Aggressive LED headlamp, twin-muffler exhaust, and clip-on handlebars designed for sporty riding dynamics.</p>
+                        </div>
+                      </>
+                    )}
 
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Layers size={24} /></div>
-                        <h4>21.8L Large Storage</h4>
-                        <p>Spacious underseat storage with convenient front rack & USB mobile charging socket for easy riding.</p>
-                      </div>
-
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Lock size={24} /></div>
-                        <h4>One-Push Central Locking</h4>
-                        <p>Integrated central locking system with easy ignition start and secure shutter key protection.</p>
-                      </div>
-                    </>
-                  )}
-
-                  {/* BIKES / MOTORCYCLES FEATURES */}
-                  {!isEV && isBike && (
-                    <>
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Gauge size={24} /></div>
-                        <h4>Gixxer Performance SEP Engine</h4>
-                        <p>Derived from Suzuki GSX-R racing heritage, offering powerful throttle response and high-speed stability.</p>
-                      </div>
-
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><ShieldCheck size={24} /></div>
-                        <h4>Dual Channel ABS Brakes</h4>
-                        <p>Advanced Anti-Lock Braking System with twin disc brakes for unmatched emergency stopping power and control.</p>
-                      </div>
-
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Compass size={24} /></div>
-                        <h4>Aerodynamic Sport Styling</h4>
-                        <p>Aggressive LED headlamp, twin-muffler exhaust, and clip-on handlebars designed for sporty riding dynamics.</p>
-                      </div>
-
-                      <div className="feature-highlight-card">
-                        <div className="feature-card-icon"><Cpu size={24} /></div>
-                        <h4>Fully Digital Speedometer</h4>
-                        <p>Race-inspired digital console with gear position indicator, shift light, and real-time fuel efficiency meter.</p>
-                      </div>
-                    </>
-                  )}
-
-                  {/* EV / ELECTRIC FEATURES */}
-                  {isEV && (
-                    <>
-                      <div className="feature-highlight-card ev-style">
-                        <div className="feature-card-icon"><Zap size={24} /></div>
-                        <h4>Zero Emission Eco Mobility</h4>
-                        <p>100% Electric drivetrain delivering zero carbon emissions with whisper-quiet, smooth acceleration.</p>
-                      </div>
-
-                      <div className="feature-highlight-card ev-style">
-                        <div className="feature-card-icon"><Sparkles size={24} /></div>
-                        <h4>Fast Charge Battery System</h4>
-                        <p>Advanced Lithium-Ion battery pack with fast-charging technology (0 to 80% in 60 mins).</p>
-                      </div>
-
-                      <div className="feature-highlight-card ev-style">
-                        <div className="feature-card-icon"><IndianRupee size={24} /></div>
-                        <h4>Ultra Low Running Cost</h4>
-                        <p>Save over ₹25,000 annually with a running cost of just ₹0.15/km compared to traditional petrol scooters.</p>
-                      </div>
-
-                      <div className="feature-highlight-card ev-style">
-                        <div className="feature-card-icon"><Cpu size={24} /></div>
-                        <h4>Smart App & Regenerative Braking</h4>
-                        <p>Energy recovery during braking + smart app integration for remote battery status and range estimation.</p>
-                      </div>
-                    </>
-                  )}
-
-                </div>
+                    {isEV && (
+                      <>
+                        <div className="feature-highlight-card ev-style">
+                          <div className="feature-card-icon"><Zap size={24} /></div>
+                          <h4>Zero Emission Eco Mobility</h4>
+                          <p>100% Electric drivetrain delivering zero carbon emissions with whisper-quiet, smooth acceleration.</p>
+                        </div>
+                        <div className="feature-highlight-card ev-style">
+                          <div className="feature-card-icon"><Sparkles size={24} /></div>
+                          <h4>Fast Charge Battery System</h4>
+                          <p>Advanced Lithium-Ion battery pack with fast-charging technology (0 to 80% in 60 mins).</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
 
                 {vehicle.description && (
                   <div className="full-vehicle-description">
@@ -500,38 +486,10 @@ const VehicleDetailsPage = () => {
                     </tr>
                     <tr>
                       <td>Showroom Location</td>
-                      <td><strong>Shri Hari Suzuki, Main Showroom</strong></td>
+                      <td><strong>Shri Hari Suzuki, Guna Showroom</strong></td>
                     </tr>
                   </tbody>
                 </table>
-              </div>
-            )}
-
-            {/* TAB CONTENT: EMI CALCULATOR */}
-            {activeTab === "emi" && (
-              <div className="tab-content-panel">
-                <h3>Price & Estimated EMI Breakdown</h3>
-
-                <div className="emi-breakdown-container">
-                  <div className="emi-box">
-                    <span>Ex-Showroom Price</span>
-                    <strong>₹{priceNum.toLocaleString("en-IN")}</strong>
-                  </div>
-
-                  <div className="emi-box">
-                    <span>Min Down Payment (20%)</span>
-                    <strong>₹{downPayment.toLocaleString("en-IN")}</strong>
-                  </div>
-
-                  <div className="emi-box highlight">
-                    <span>Monthly EMI (36 Months @ 9.5%)</span>
-                    <strong>₹{estimatedEMI.toLocaleString("en-IN")} / mo*</strong>
-                  </div>
-                </div>
-
-                <p className="emi-disclaimer">
-                  *Disclaimer: EMI calculations are approximate. Final loan interest rates and down payment depend on individual bank/finance approvals at Shri Hari Suzuki showroom.
-                </p>
               </div>
             )}
 

@@ -534,6 +534,8 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setColor(request.getColor());
         vehicle.setDescription(request.getDescription());
         vehicle.setCategory(request.getCategory());
+        vehicle.setFeaturesJson(request.getFeaturesJson());
+        vehicle.setSpecificationsJson(request.getSpecificationsJson());
 
         vehicle.setFeatured(
                 request.getFeatured() != null
@@ -597,6 +599,8 @@ public class VehicleServiceImpl implements VehicleService {
             }
         }
         response.setCategory(cat);
+        response.setFeaturesJson(vehicle.getFeaturesJson());
+        response.setSpecificationsJson(vehicle.getSpecificationsJson());
 
         response.setPrice(vehicle.getPrice());
         response.setEngineCc(vehicle.getEngineCc());

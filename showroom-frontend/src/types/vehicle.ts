@@ -19,6 +19,8 @@ export interface Vehicle {
 
   vehicleType: VehicleType;
   category?: string;
+  featuresJson?: string;
+  specificationsJson?: string;
 
   price: number;
   engineCc?: number | null;
@@ -81,6 +83,8 @@ export interface VehicleRequest {
   variant?: string;
   vehicleType: VehicleType;
   category?: string;
+  featuresJson?: string;
+  specificationsJson?: string;
 
   price: number;
   engineCc?: number;
