@@ -381,6 +381,7 @@ public class VehicleServiceImpl implements VehicleService {
             Boolean featured,
             String fuelType,
             String category,
+            String model,
             int page,
             int size,
             String sortBy,
@@ -458,7 +459,8 @@ public class VehicleServiceImpl implements VehicleService {
                 available,
                 featured,
                 fuelType,
-                category
+                category,
+                model
         );
 
         Page<VehicleResponse> vehiclePage = vehicleRepository

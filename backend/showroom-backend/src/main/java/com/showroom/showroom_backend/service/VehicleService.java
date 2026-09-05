@@ -28,6 +28,7 @@ public interface VehicleService {
             Boolean featured,
             String fuelType,
             String category,
+            String model,
             int page,
             int size,
             String sortBy,

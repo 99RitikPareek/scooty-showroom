@@ -95,8 +95,65 @@ const Navbar = () => {
                 }`
               }
             >
-              Vehicles
+              All Vehicles
             </NavLink>
+
+            {/* SCOOTERS DROPDOWN */}
+            <div className="nav-dropdown">
+              <Link to="/vehicles?category=SCOOTER" className="nav-link nav-dropdown-trigger">
+                Scooters <ChevronDown size={13} style={{ marginLeft: "2px" }} />
+              </Link>
+              <div className="nav-dropdown-menu">
+                <Link to="/vehicles?category=SCOOTER" className="nav-dropdown-item title-item">
+                  🛵 All Scooters
+                </Link>
+                <Link to="/vehicles?category=SCOOTER&model=Access" className="nav-dropdown-item">
+                  Access 125
+                </Link>
+                <Link to="/vehicles?category=SCOOTER&model=Avenis" className="nav-dropdown-item">
+                  Avenis 125
+                </Link>
+                <Link to="/vehicles?category=SCOOTER&model=Burgman" className="nav-dropdown-item">
+                  Burgman Street
+                </Link>
+              </div>
+            </div>
+
+            {/* BIKES DROPDOWN */}
+            <div className="nav-dropdown">
+              <Link to="/vehicles?category=BIKE" className="nav-link nav-dropdown-trigger">
+                Bikes <ChevronDown size={13} style={{ marginLeft: "2px" }} />
+              </Link>
+              <div className="nav-dropdown-menu">
+                <Link to="/vehicles?category=BIKE" className="nav-dropdown-item title-item">
+                  🏍️ All Bikes
+                </Link>
+                <Link to="/vehicles?category=BIKE&model=Gixxer" className="nav-dropdown-item">
+                  Gixxer
+                </Link>
+                <Link to="/vehicles?category=BIKE&model=SF" className="nav-dropdown-item">
+                  Gixxer SF
+                </Link>
+              </div>
+            </div>
+
+            {/* EV DROPDOWN */}
+            <div className="nav-dropdown">
+              <Link to="/vehicles?category=ELECTRIC" className="nav-link nav-dropdown-trigger">
+                EV <ChevronDown size={13} style={{ marginLeft: "2px" }} />
+              </Link>
+              <div className="nav-dropdown-menu">
+                <Link to="/vehicles?category=ELECTRIC" className="nav-dropdown-item title-item">
+                  ⚡ All EV Electric
+                </Link>
+                <Link to="/vehicles?category=ELECTRIC&model=Access" className="nav-dropdown-item">
+                  e-Access (EV Access)
+                </Link>
+                <Link to="/vehicles?category=ELECTRIC&model=Burgman" className="nav-dropdown-item">
+                  e-Burgman (EV Burgman)
+                </Link>
+              </div>
+            </div>
 
             {/* OFFERS */}
 
@@ -219,9 +276,26 @@ const Navbar = () => {
               onClick={closeMobileMenu}
               className="mobile-nav-link"
             >
-              Vehicles
-              <ChevronDown size={16} />
+              All Vehicles
             </NavLink>
+
+            <div className="mobile-nav-subgroup">
+              <div className="mobile-subgroup-title">🛵 Scooters</div>
+              <Link to="/vehicles?category=SCOOTER&model=Access" onClick={closeMobileMenu} className="mobile-sublink">• Access 125</Link>
+              <Link to="/vehicles?category=SCOOTER&model=Avenis" onClick={closeMobileMenu} className="mobile-sublink">• Avenis 125</Link>
+              <Link to="/vehicles?category=SCOOTER&model=Burgman" onClick={closeMobileMenu} className="mobile-sublink">• Burgman Street</Link>
+            </div>
+
+            <div className="mobile-nav-subgroup">
+              <div className="mobile-subgroup-title">🏍️ Bikes</div>
+              <Link to="/vehicles?category=BIKE&model=Gixxer" onClick={closeMobileMenu} className="mobile-sublink">• Gixxer</Link>
+              <Link to="/vehicles?category=BIKE&model=SF" onClick={closeMobileMenu} className="mobile-sublink">• Gixxer SF</Link>
+            </div>
+
+            <div className="mobile-nav-subgroup">
+              <div className="mobile-subgroup-title">⚡ EV Electric</div>
+              <Link to="/vehicles?category=ELECTRIC&model=Access" onClick={closeMobileMenu} className="mobile-sublink">• e-Access (EV Access)</Link>
+            </div>
 
             {/* MOBILE OFFERS */}
 

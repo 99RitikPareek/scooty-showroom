@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Bike,
   AlertCircle,
@@ -22,6 +22,7 @@ const VehiclesPage = () => {
 
   const urlType = searchParams.get("type");
   const urlCategory = searchParams.get("category");
+  const urlModel = searchParams.get("model");
 
   const type =
     urlType === "NEW" || urlType === "USED"
@@ -34,21 +35,22 @@ const VehiclesPage = () => {
 
   // Filters
   const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState<"" | "NEW" | "USED" >(type ?? "");
-
+  const [filterType, setFilterType] = useState<"" | "NEW" | "USED">(type ?? "");
   const [category, setCategory] = useState(urlCategory || "");
+  const [modelFilter, setModelFilter] = useState(urlModel || "");
   const [fuelType, setFuelType] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
-const clearFilters = () => {
-  setSearch("");
-  setFilterType("");
-  setCategory("");
-  setFuelType("");
-  setSortBy("");
-  setSearchParams({});
-};
+  const clearFilters = () => {
+    setSearch("");
+    setFilterType("");
+    setCategory("");
+    setModelFilter("");
+    setFuelType("");
+    setSortBy("");
+    setSearchParams({});
+  };
 
   // Pagination
   const [page, setPage] = useState(0);
@@ -75,6 +77,7 @@ const clearFilters = () => {
             : undefined,
 
         category: category || undefined,
+        model: modelFilter || undefined,
         fuelType: fuelType || undefined,
 
         page,
@@ -108,6 +111,7 @@ const clearFilters = () => {
     search,
     filterType,
     category,
+    modelFilter,
     fuelType,
     page,
     sortBy,
@@ -120,46 +124,21 @@ const clearFilters = () => {
 
   /*
    * ============================================================
-   * TYPE URL SYNC
+   * URL SYNC
    * ============================================================
    */
 
   useEffect(() => {
     setFilterType(type ?? "");
-    if (urlCategory) {
-      setCategory(urlCategory);
-    }
+    setCategory(urlCategory || "");
+    setModelFilter(urlModel || "");
     setPage(0);
-  }, [type, urlCategory]);
-
-  const handleCategoryChange = (value: string) => {
-    setCategory(value);
-    setPage(0);
-    const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set("category", value);
-    } else {
-      newParams.delete("category");
-    }
-    setSearchParams(newParams);
-  };
-
-  /*
-   * ============================================================
-   * SEARCH
-   * ============================================================
-   */
+  }, [type, urlCategory, urlModel]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(0);
   };
-
-  /*
-   * ============================================================
-   * VEHICLE TYPE
-   * ============================================================
-   */
 
   const handleTypeChange = (value: string) => {
     const newType =
@@ -169,83 +148,56 @@ const clearFilters = () => {
 
     setFilterType(newType);
     setPage(0);
-
-    if (newType) {
-      setSearchParams({ type: newType });
-    } else {
-      setSearchParams({});
-    }
   };
 
-  /*
-   * ============================================================
-   * FUEL TYPE
-   * ============================================================
-   */
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
+    setModelFilter("");
+    setPage(0);
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set("category", value);
+    } else {
+      newParams.delete("category");
+    }
+    newParams.delete("model");
+    setSearchParams(newParams);
+  };
+
+  const handleModelChange = (value: string) => {
+    setModelFilter(value);
+    setPage(0);
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set("model", value);
+    } else {
+      newParams.delete("model");
+    }
+    setSearchParams(newParams);
+  };
 
   const handleFuelTypeChange = (value: string) => {
     setFuelType(value);
     setPage(0);
   };
 
-  /*
-   * ============================================================
-   * SORT
-   * ============================================================
-   */
-
   const handleSortChange = (value: string) => {
-    setPage(0);
-
-    switch (value) {
-      case "price-asc":
-        setSortBy("price");
-        setSortDir("asc");
-        break;
-
-      case "price-desc":
-        setSortBy("price");
-        setSortDir("desc");
-        break;
-
-      case "name-asc":
-        setSortBy("name");
-        setSortDir("asc");
-        break;
-
-      case "name-desc":
-        setSortBy("name");
-        setSortDir("desc");
-        break;
-
-      default:
-        setSortBy("createdAt");
-        setSortDir("desc");
+    if (value === "price-asc") {
+      setSortBy("price");
+      setSortDir("asc");
+    } else if (value === "price-desc") {
+      setSortBy("price");
+      setSortDir("desc");
+    } else if (value === "name-asc") {
+      setSortBy("name");
+      setSortDir("asc");
+    } else {
+      setSortBy("createdAt");
+      setSortDir("desc");
     }
+
+    setPage(0);
   };
-
-  /*
-   * ============================================================
-   * CLEAR FILTERS
-   * ============================================================
-   */
-
-//   const clearFilters = () => {
-//     setSearch("");
-//     setFilterType("");
-//     setFuelType("");
-//     setSortBy("createdAt");
-//     setSortDir("desc");
-//     setPage(0);
-//
-//     setSearchParams({});
-//   };
-
-  /*
-   * ============================================================
-   * PAGINATION
-   * ============================================================
-   */
 
   const handlePreviousPage = () => {
     if (page > 0) {
@@ -269,122 +221,56 @@ const clearFilters = () => {
     }
   };
 
-  /*
-   * ============================================================
-   * PAGE TITLE
-   * ============================================================
-   */
-
   const title =
-    type === "NEW"
-      ? "New Suzuki Vehicles"
-      : type === "USED"
-        ? "Pre-Owned Vehicles"
-        : "Our Vehicles";
+    modelFilter
+      ? `Suzuki ${modelFilter} Models`
+      : category === "SCOOTER"
+        ? "Suzuki Scooters (Scooty)"
+        : category === "BIKE"
+          ? "Suzuki Motorcycles (Bikes)"
+          : category === "ELECTRIC"
+            ? "Suzuki Electric Vehicles (EV)"
+            : type === "NEW"
+              ? "New Suzuki Vehicles"
+              : type === "USED"
+                ? "Pre-Owned Vehicles"
+                : "Our Vehicles";
 
   const description =
-    type === "NEW"
-      ? "Explore the latest Suzuki scooters available at Shri Hari Suzuki."
-      : type === "USED"
-        ? "Explore quality checked pre-owned vehicles available at our showroom."
-        : "Explore Suzuki scooters and quality pre-owned vehicles available at our showroom.";
-
-  /*
-   * ============================================================
-   * RENDER
-   * ============================================================
-   */
+    "Explore Access 125, Avenis 125, Burgman Street, Gixxer, Gixxer SF & Electric mobility at Shri Hari Suzuki.";
 
   return (
     <main className="vehicles-page">
 
-      {/* ======================================================
-          PAGE HERO
-      ====================================================== */}
-
+      {/* PAGE HERO */}
       <section className="page-hero">
         <div className="container">
           <span>SHRI HARI SUZUKI</span>
-
           <h1>{title}</h1>
-
           <p>{description}</p>
         </div>
       </section>
 
-      {/* ======================================================
-          VEHICLES
-      ====================================================== */}
-
+      {/* VEHICLES SECTION */}
       <section className="section">
         <div className="container">
 
-          {/* ==================================================
-              TOOLBAR
-          ================================================== */}
-
+          {/* TOOLBAR */}
           <div className="vehicle-toolbar">
-
             <div>
               <h2>Available Vehicles</h2>
 
               {!loading && !error && (
                 <p>
                   {totalElements}{" "}
-                  {totalElements === 1
-                    ? "vehicle"
-                    : "vehicles"}{" "}
+                  {totalElements === 1 ? "vehicle" : "vehicles"}{" "}
                   available
                 </p>
               )}
 
-              {loading && (
-                <p>Loading vehicles...</p>
-              )}
-            </div>
-
-            {/* TYPE QUICK FILTER */}
-            <div className="vehicle-filters">
-
-              <Link
-                to="/vehicles"
-                className={
-                  !type
-                    ? "filter-btn active"
-                    : "filter-btn"
-                }
-              >
-                All
-              </Link>
-
-              <Link
-                to="/vehicles?type=NEW"
-                className={
-                  type === "NEW"
-                    ? "filter-btn active"
-                    : "filter-btn"
-                }
-              >
-                New
-              </Link>
-
-              <Link
-                to="/vehicles?type=USED"
-                className={
-                  type === "USED"
-                    ? "filter-btn active"
-                    : "filter-btn"
-                }
-              >
-                Pre-Owned
-              </Link>
-
+              {loading && <p>Loading vehicles...</p>}
             </div>
           </div>
-
-          {/* ==================================================
-              SEARCH + FILTERS
-          ================================================== */}
 
           {/* CATEGORY FILTER PILLS */}
           <div className="category-filter-pills-bar">
@@ -418,34 +304,32 @@ const clearFilters = () => {
             </button>
           </div>
 
+          {/* SEARCH + FILTERS */}
           <VehicleFilters
             search={search}
             type={filterType}
             category={category}
+            model={modelFilter}
             fuelType={fuelType}
-            onCategoryChange={handleCategoryChange}
             sortBy={
               sortBy === "price" && sortDir === "asc"
                 ? "price-asc"
-                : sortBy === "price" &&
-                    sortDir === "desc"
+                : sortBy === "price" && sortDir === "desc"
                   ? "price-desc"
-                  : sortBy === "name" &&
-                      sortDir === "asc"
+                  : sortBy === "name" && sortDir === "asc"
                     ? "name-asc"
                     : ""
             }
             onSearchChange={handleSearchChange}
             onTypeChange={handleTypeChange}
+            onCategoryChange={handleCategoryChange}
+            onModelChange={handleModelChange}
             onFuelTypeChange={handleFuelTypeChange}
             onSortChange={handleSortChange}
             onClear={clearFilters}
           />
 
-          {/* ==================================================
-              LOADING
-          ================================================== */}
-
+          {/* LOADING */}
           {loading && (
             <div className="vehicles-grid">
               {Array.from({ length: 6 }).map((_, index) => (
@@ -454,21 +338,12 @@ const clearFilters = () => {
             </div>
           )}
 
-          {/* ==================================================
-              ERROR
-          ================================================== */}
-
+          {/* ERROR */}
           {!loading && error && (
             <div className="vehicle-state error-state">
-
               <AlertCircle size={42} />
-
-              <h3>
-                Unable to load vehicles
-              </h3>
-
+              <h3>Unable to load vehicles</h3>
               <p>{error}</p>
-
               <button
                 type="button"
                 className="btn btn-primary"
@@ -476,103 +351,62 @@ const clearFilters = () => {
               >
                 Try Again
               </button>
-
             </div>
           )}
 
-          {/* ==================================================
-              EMPTY
-          ================================================== */}
+          {/* EMPTY */}
+          {!loading && !error && vehicles.length === 0 && (
+            <div className="vehicle-state">
+              <Bike size={42} />
+              <h3>No Vehicles Found</h3>
+              <p>There are currently no vehicles matching your selected model or filter criteria.</p>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={clearFilters}
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
 
-          {!loading &&
-            !error &&
-            vehicles.length === 0 && (
-              <div className="vehicle-state">
-
-                <Bike size={42} />
-
-                <h3>
-                  {search
-                    ? "No Vehicles Found"
-                    : filterType === "USED"
-                      ? "No Pre-Owned Vehicles Available"
-                      : filterType === "NEW"
-                        ? "No New Vehicles Available"
-                        : "No Vehicles Available"}
-                </h3>
-
-                <p>
-                  {search
-                    ? `No vehicles matched "${search}".`
-                    : "There are currently no vehicles available with these filters."}
-                </p>
-
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={clearFilters}
-                >
-                  Clear Filters
-                </button>
-
+          {/* VEHICLE GRID */}
+          {!loading && !error && vehicles.length > 0 && (
+            <>
+              <div className="vehicles-grid">
+                {vehicles.map((vehicle) => (
+                  <VehicleCard key={vehicle.id} vehicle={vehicle} />
+                ))}
               </div>
-            )}
 
-          {/* ==================================================
-              VEHICLE GRID
-          ================================================== */}
+              {/* PAGINATION */}
+              {totalPages > 1 && (
+                <div className="vehicle-pagination">
+                  <button
+                    type="button"
+                    className="pagination-btn"
+                    disabled={page === 0}
+                    onClick={handlePreviousPage}
+                  >
+                    Previous
+                  </button>
 
-          {!loading &&
-            !error &&
-            vehicles.length > 0 && (
-              <>
-                <div className="vehicles-grid">
+                  <span className="pagination-info">
+                    Page {page + 1} of {totalPages}
+                  </span>
 
-                  {vehicles.map((vehicle) => (
-                    <VehicleCard
-                      key={vehicle.id}
-                      vehicle={vehicle}
-                    />
-                  ))}
-
+                  <button
+                    type="button"
+                    className="pagination-btn"
+                    disabled={page >= totalPages - 1}
+                    onClick={handleNextPage}
+                  >
+                    Next
+                  </button>
                 </div>
-
-                {/* ============================================
-                    PAGINATION
-                ============================================ */}
-
-                {totalPages > 1 && (
-                  <div className="vehicle-pagination">
-
-                    <button
-                      type="button"
-                      className="pagination-btn"
-                      disabled={page === 0}
-                      onClick={handlePreviousPage}
-                    >
-                      Previous
-                    </button>
-
-                    <span className="pagination-info">
-                      Page {page + 1} of {totalPages}
-                    </span>
-
-                    <button
-                      type="button"
-                      className="pagination-btn"
-                      disabled={
-                        page >= totalPages - 1
-                      }
-                      onClick={handleNextPage}
-                    >
-                      Next
-                    </button>
-
-                  </div>
-                )}
-
-              </>
-            )}
+              )}
+            </>
+          )}
 
         </div>
       </section>

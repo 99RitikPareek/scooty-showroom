@@ -25,7 +25,8 @@ public class VehicleSpecification {
             Boolean available,
             Boolean featured,
             String fuelType,
-            String category) {
+            String category,
+            String model) {
 
         return (root, query, criteriaBuilder) -> {
 
@@ -174,6 +175,16 @@ public class VehicleSpecification {
                 } else {
                     predicates.add(criteriaBuilder.equal(criteriaBuilder.upper(root.get("category")), catUpper));
                 }
+            }
+
+            
+            // Model filter
+            if (model != null && !model.trim().isEmpty()) {
+                String mLower = "%" + model.trim().toLowerCase() + "%";
+                Predicate nameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), mLower);
+                Predicate modelMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("model")), mLower);
+                Predicate variantMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("variant")), mLower);
+                predicates.add(criteriaBuilder.or(nameMatch, modelMatch, variantMatch));
             }
 
             return criteriaBuilder.and(

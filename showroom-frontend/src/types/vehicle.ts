@@ -51,6 +51,7 @@ export interface VehicleFilters {
   brandId?: number;
   vehicleType?: VehicleType;
   category?: string;
+  model?: string;
   minPrice?: number;
   maxPrice?: number;
   available?: boolean;

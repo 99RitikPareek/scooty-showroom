@@ -103,6 +103,8 @@ public class VehicleController {
 
             @RequestParam(required = false) String category,
 
+            @RequestParam(required = false) String model,
+
             @RequestParam(defaultValue = "0") int page,
 
             @RequestParam(defaultValue = "10") int size,
@@ -122,6 +124,7 @@ public class VehicleController {
                         featured,
                         fuelType,
                         category,
+                        model,
                         page,
                         size,
                         sortBy,

@@ -4,11 +4,13 @@ interface VehicleFiltersProps {
   search: string;
   type: string;
   category: string;
+  model: string;
   fuelType: string;
   sortBy: string;
   onSearchChange: (value: string) => void;
   onTypeChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
+  onModelChange: (value: string) => void;
   onFuelTypeChange: (value: string) => void;
   onSortChange: (value: string) => void;
   onClear: () => void;
@@ -18,11 +20,13 @@ const VehicleFilters = ({
   search,
   type,
   category,
+  model,
   fuelType,
   sortBy,
   onSearchChange,
   onTypeChange,
   onCategoryChange,
+  onModelChange,
   onFuelTypeChange,
   onSortChange,
   onClear,
@@ -31,6 +35,7 @@ const VehicleFilters = ({
     search.trim() !== "" ||
     type !== "" ||
     category !== "" ||
+    model !== "" ||
     fuelType !== "" ||
     sortBy !== "";
 
@@ -97,6 +102,40 @@ const VehicleFilters = ({
             <option value="SCOOTER">🛵 Scooty / Scooter</option>
             <option value="BIKE">🏍️ Bike / Motorcycle</option>
             <option value="ELECTRIC">⚡ EV / Electric</option>
+          </select>
+        </div>
+
+        {/* SPECIFIC MODEL */}
+        <div className="filter-field">
+          <label htmlFor="vehicle-model">
+            Model
+          </label>
+
+          <select
+            id="vehicle-model"
+            value={model}
+            onChange={(e) => onModelChange(e.target.value)}
+          >
+            <option value="">All Models</option>
+            {(!category || category === "SCOOTER") && (
+              <optgroup label="Scooters">
+                <option value="Access">Access 125</option>
+                <option value="Avenis">Avenis 125</option>
+                <option value="Burgman">Burgman Street</option>
+              </optgroup>
+            )}
+            {(!category || category === "BIKE") && (
+              <optgroup label="Bikes">
+                <option value="Gixxer">Gixxer</option>
+                <option value="SF">Gixxer SF</option>
+              </optgroup>
+            )}
+            {(!category || category === "ELECTRIC") && (
+              <optgroup label="Electric EV">
+                <option value="Access">e-Access (EV Access)</option>
+                <option value="Burgman">e-Burgman (EV Burgman)</option>
+              </optgroup>
+            )}
           </select>
         </div>
 

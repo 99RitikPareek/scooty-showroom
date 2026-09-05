@@ -9303,3 +9303,86 @@ select {
 .category-card:hover .category-card-btn {
   gap: 12px;
 }
+
+
+/* =========================================================
+   NAVBAR DROPDOWN STYLING
+========================================================= */
+
+.nav-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.nav-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 200px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.15);
+  border: 1px solid #e2e8f0;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown-item {
+  display: block;
+  padding: 9px 16px;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nav-dropdown-item:hover {
+  background: #f8fafc;
+  color: #E60012;
+  padding-left: 22px;
+}
+
+.nav-dropdown-item.title-item {
+  font-weight: 700;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+/* Mobile Nav Subgroup */
+.mobile-nav-subgroup {
+  padding: 4px 0 8px 16px;
+}
+
+.mobile-subgroup-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.mobile-sublink {
+  display: block;
+  padding: 4px 8px;
+  color: #334155;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
