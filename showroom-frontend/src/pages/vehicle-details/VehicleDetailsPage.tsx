@@ -1,80 +1,76 @@
-import { getImageUrl } from "../../utils/imageUtils";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
-  ArrowLeft,
-  ArrowRight,
   Bike,
-  CalendarDays,
-  CheckCircle2,
-  Fuel,
   Gauge,
-  IndianRupee,
-  Settings2,
+  Fuel,
+  CalendarDays,
   AlertCircle,
-  RefreshCw,
+  CheckCircle2,
+  IndianRupee,
+  MessageSquare,
+  ShieldCheck,
+  Zap,
+  Sparkles,
+  Navigation,
+  Lock,
+  Compass,
+  Cpu,
+  Calculator,
+  Layers,
+  FileText,
 } from "lucide-react";
 
+import VehicleSkeleton from "../../components/vehicle/VehicleSkeleton";
 import vehicleService from "../../services/vehicleService";
+import { getImageUrl } from "../../utils/imageUtils";
 import type { Vehicle } from "../../types/vehicle";
 
 const VehicleDetailsPage = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { id } = useParams<{ id: string }>();
 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const loadVehicle = async () => {
-    if (!id) {
-      setError("Vehicle ID is missing.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError("");
-
-      const data = await vehicleService.getById(
-        Number(id)
-      );
-
-      setVehicle(data);
-    } catch (err) {
-      console.error("Failed to load vehicle:", err);
-
-      setError(
-        "Unable to load vehicle details. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"highlights" | "specs" | "emi">("highlights");
 
   useEffect(() => {
+    const loadVehicle = async () => {
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await vehicleService.getById(Number(id));
+        setVehicle(data);
+
+        const firstImage =
+          data.primaryImageUrl || data.images?.[0]?.imageUrl || null;
+
+        setSelectedImage(firstImage);
+      } catch (err) {
+        console.error("Failed to load vehicle details:", err);
+        setError(
+          "Unable to load vehicle details right now. Please try again later."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadVehicle();
   }, [id]);
 
   if (loading) {
     return (
       <main className="vehicle-details-page">
-        <div className="container">
-          <div className="vehicle-status">
-            <RefreshCw
-              size={36}
-              className="loading-icon"
-            />
-
-            <h3>Loading vehicle details...</h3>
-
-            <p>
-              Fetching vehicle information from
-              Shri Hari Suzuki.
-            </p>
+        <section className="section">
+          <div className="container" style={{ maxWidth: "800px" }}>
+            <VehicleSkeleton />
           </div>
-        </div>
+        </section>
       </main>
     );
   }
@@ -82,63 +78,49 @@ const VehicleDetailsPage = () => {
   if (error || !vehicle) {
     return (
       <main className="vehicle-details-page">
-        <div className="container">
-          <div className="vehicle-status error">
-            <AlertCircle size={40} />
-
-            <h3>Vehicle not found</h3>
-
-            <p>
-              {error ||
-                "The requested vehicle could not be found."}
-            </p>
-
-            <div className="vehicle-empty-actions">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={loadVehicle}
-              >
-                Try Again
-              </button>
-
-              <Link
-                to="/vehicles"
-                className="btn btn-secondary"
-              >
-                Back To Vehicles
+        <section className="section">
+          <div className="container">
+            <div className="vehicle-state error-state">
+              <AlertCircle size={48} />
+              <h2>Vehicle Not Found</h2>
+              <p>{error || "The requested vehicle details could not be found."}</p>
+              <Link to="/vehicles" className="btn btn-primary">
+                Back To All Vehicles
               </Link>
             </div>
           </div>
-        </div>
+        </section>
       </main>
     );
   }
 
   const activeImage =
-    selectedImage || (vehicle.images?.length > 0 ? vehicle.images[0].imageUrl : null);
+    selectedImage || vehicle.primaryImageUrl || vehicle.images?.[0]?.imageUrl;
+
+  const category = (vehicle.category || "").toUpperCase();
+  const fuelTypeUpper = (vehicle.fuelType || "").toUpperCase();
+  const isEV = category === "ELECTRIC" || fuelTypeUpper.includes("ELECTRIC") || fuelTypeUpper.includes("EV");
+  const isBike = category === "BIKE" || vehicle.name.toUpperCase().includes("GIXXER") || vehicle.name.toUpperCase().includes("STROM");
+
+  // Calculate estimated EMI (Assuming 80% loan amount for 36 months at 9.5% interest)
+  const priceNum = Number(vehicle.price) || 0;
+  const loanAmount = priceNum * 0.8;
+  const monthlyRate = 0.095 / 12;
+  const emiMonths = 36;
+  const estimatedEMI = Math.round((loanAmount * monthlyRate * Math.pow(1 + monthlyRate, emiMonths)) / (Math.pow(1 + monthlyRate, emiMonths) - 1));
+  const downPayment = Math.round(priceNum * 0.2);
+
+  const whatsappMessage = encodeURIComponent(
+    `Hello Shri Hari Suzuki! I am interested in ${vehicle.brandName} ${vehicle.name} (${vehicle.model || ''}). Please share best price offer and test ride availability.`
+  );
 
   return (
     <main className="vehicle-details-page">
 
-      {/* BREADCRUMB */}
-      <section className="page-hero vehicle-details-hero">
+      {/* PAGE HERO */}
+      <section className="page-hero">
         <div className="container">
-
-          <Link
-            to="/vehicles"
-            className="back-link"
-          >
-            <ArrowLeft size={17} />
-            Back To Vehicles
-          </Link>
-
-          <span>
-            {vehicle.vehicleType === "NEW"
-              ? "NEW SUZUKI VEHICLE"
-              : "PRE-OWNED VEHICLE"}
-          </span>
-
+          <span>SHRI HARI SUZUKI • OFFICIAL SHOWROOM</span>
           <h1>
             {vehicle.brandName} {vehicle.name}
           </h1>
@@ -146,25 +128,21 @@ const VehicleDetailsPage = () => {
           {vehicle.model && (
             <p>
               {vehicle.model}
-              {vehicle.variant
-                ? ` • ${vehicle.variant}`
-                : ""}
+              {vehicle.variant ? ` • ${vehicle.variant}` : ""}
             </p>
           )}
         </div>
       </section>
 
-      {/* DETAILS */}
+      {/* DETAILS LAYOUT */}
       <section className="section">
         <div className="container">
 
           <div className="vehicle-details-layout">
 
-            {/* IMAGE */}
+            {/* GALLERY */}
             <div className="vehicle-details-gallery">
-
               <div className="vehicle-main-image">
-
                 {activeImage ? (
                   <img
                     src={getImageUrl(activeImage)}
@@ -173,274 +151,395 @@ const VehicleDetailsPage = () => {
                 ) : (
                   <div className="vehicle-image-placeholder">
                     <Bike size={72} />
-                    <span>
-                      Vehicle image unavailable
-                    </span>
+                    <span>Vehicle image unavailable</span>
                   </div>
                 )}
 
                 <span className="vehicle-type-badge">
-                  {vehicle.vehicleType === "NEW"
-                    ? "NEW"
-                    : "PRE-OWNED"}
+                  {vehicle.vehicleType === "NEW" ? "NEW" : "PRE-OWNED"}
                 </span>
 
+                {isEV && (
+                  <span className="category-tag-badge ev-tag">
+                    <Zap size={14} /> EV ELECTRIC
+                  </span>
+                )}
+                {!isEV && isBike && (
+                  <span className="category-tag-badge bike-tag">
+                    🏍️ PERFORMANCE BIKE
+                  </span>
+                )}
+                {!isEV && !isBike && (
+                  <span className="category-tag-badge scooter-tag">
+                    🛵 SUZUKI SCOOTY
+                  </span>
+                )}
               </div>
 
-              {vehicle.images &&
-                vehicle.images.length > 1 && (
-                  <div className="vehicle-thumbnail-grid">
-
-                    {vehicle.images.map((image) => (
-                      <img
-                        key={image.id}
-                        src={getImageUrl(image.imageUrl)} onClick={() => setSelectedImage(image.imageUrl)} style={{ cursor: "pointer" }}
-                        alt={
-                          image.altText ||
-                          `${vehicle.name} image`
-                        }
-                      />
-                    ))}
-
-                  </div>
-                )}
-
+              {vehicle.images && vehicle.images.length > 1 && (
+                <div className="vehicle-thumbnail-grid">
+                  {vehicle.images.map((image) => (
+                    <img
+                      key={image.id}
+                      src={getImageUrl(image.imageUrl)}
+                      onClick={() => setSelectedImage(image.imageUrl)}
+                      style={{ cursor: "pointer" }}
+                      className={activeImage === image.imageUrl ? "active-thumb" : ""}
+                      alt={image.altText || `${vehicle.name} image`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* INFORMATION */}
+            {/* CONTENT & INFORMATION */}
             <div className="vehicle-details-content">
 
               <div className="vehicle-detail-heading">
-
-                <span className="vehicle-brand">
-                  {vehicle.brandName}
-                </span>
-
+                <span className="vehicle-brand">{vehicle.brandName}</span>
                 <h2>
-                  {vehicle.name}
-                  {vehicle.model &&
-                    ` ${vehicle.model}`}
+                  {vehicle.name} {vehicle.model && `${vehicle.model}`}
                 </h2>
-
                 {vehicle.variant && (
-                  <p className="vehicle-variant">
-                    {vehicle.variant}
-                  </p>
+                  <p className="vehicle-variant">{vehicle.variant}</p>
                 )}
-
               </div>
 
-              {/* PRICE */}
-              <div className="vehicle-detail-price">
+              {/* PRICE & FINANCING CARD */}
+              <div className="vehicle-detail-price-card">
+                <div>
+                  <span className="price-label">Ex-Showroom Price</span>
+                  <strong className="price-value">
+                    <IndianRupee size={24} />
+                    {priceNum.toLocaleString("en-IN")}
+                  </strong>
+                </div>
 
-                <span>Starting Price</span>
-
-                <strong>
-                  <IndianRupee size={24} />
-                  {Number(
-                    vehicle.price
-                  ).toLocaleString("en-IN")}
-                </strong>
-
+                <div className="emi-badge">
+                  <span>Starting EMI</span>
+                  <strong>₹{estimatedEMI.toLocaleString("en-IN")}/mo*</strong>
+                </div>
               </div>
 
-              {/* STATUS */}
+              {/* AVAILABILITY STATUS */}
               <div className="vehicle-availability">
-
                 {vehicle.available ? (
                   <>
                     <CheckCircle2 size={18} />
-                    Available At Showroom
+                    Ready For Delivery At Showroom
                   </>
                 ) : (
                   <>
                     <AlertCircle size={18} />
-                    Currently Unavailable
+                    Currently Out of Stock
                   </>
                 )}
-
               </div>
 
-              {/* SPECIFICATIONS */}
+              {/* QUICK SPECS ROW */}
               <div className="vehicle-specifications">
-
                 {vehicle.engineCc && (
                   <div className="spec-item">
                     <Gauge size={22} />
-
                     <div>
                       <span>Engine</span>
-                      <strong>
-                        {vehicle.engineCc} cc
-                      </strong>
+                      <strong>{vehicle.engineCc} cc</strong>
                     </div>
                   </div>
                 )}
 
                 {vehicle.mileage && (
                   <div className="spec-item">
-                    <Gauge size={22} />
-
+                    <Fuel size={22} />
                     <div>
-                      <span>Mileage</span>
-                      <strong>
-                        {vehicle.mileage} km/l
-                      </strong>
+                      <span>{isEV ? "Range" : "Mileage"}</span>
+                      <strong>{vehicle.mileage} {isEV ? "km/charge" : "km/l"}</strong>
                     </div>
                   </div>
                 )}
 
                 {vehicle.fuelType && (
                   <div className="spec-item">
-                    <Fuel size={22} />
-
+                    <Zap size={22} />
                     <div>
                       <span>Fuel Type</span>
-                      <strong>
-                        {vehicle.fuelType}
-                      </strong>
-                    </div>
-                  </div>
-                )}
-
-                {vehicle.transmission && (
-                  <div className="spec-item">
-                    <Settings2 size={22} />
-
-                    <div>
-                      <span>Transmission</span>
-                      <strong>
-                        {vehicle.transmission}
-                      </strong>
+                      <strong>{vehicle.fuelType}</strong>
                     </div>
                   </div>
                 )}
 
                 {vehicle.color && (
                   <div className="spec-item">
-
                     <div className="color-dot" />
-
                     <div>
                       <span>Color</span>
-                      <strong>
-                        {vehicle.color}
-                      </strong>
+                      <strong>{vehicle.color}</strong>
                     </div>
-
                   </div>
                 )}
-
-                {vehicle.registrationYear && (
-                  <div className="spec-item">
-
-                    <div className="spec-icon-text">
-                      {vehicle.registrationYear}
-                    </div>
-
-                    <div>
-                      <span>
-                        Registration Year
-                      </span>
-
-                      <strong>
-                        {vehicle.registrationYear}
-                      </strong>
-                    </div>
-
-                  </div>
-                )}
-
-                {vehicle.kilometersDriven && (
-                  <div className="spec-item">
-
-                    <div className="spec-icon-text">
-                      KM
-                    </div>
-
-                    <div>
-                      <span>
-                        Kilometers Driven
-                      </span>
-
-                      <strong>
-                        {vehicle.kilometersDriven.toLocaleString(
-                          "en-IN"
-                        )}{" "}
-                        km
-                      </strong>
-                    </div>
-
-                  </div>
-                )}
-
-                {vehicle.ownerCount && (
-                  <div className="spec-item">
-
-                    <div className="spec-icon-text">
-                      {vehicle.ownerCount}
-                    </div>
-
-                    <div>
-                      <span>
-                        Previous Owners
-                      </span>
-
-                      <strong>
-                        {vehicle.ownerCount}
-                      </strong>
-                    </div>
-
-                  </div>
-                )}
-
               </div>
 
-              {/* DESCRIPTION */}
-              {vehicle.description && (
-                <div className="vehicle-description">
-
-                  <h3>About This Vehicle</h3>
-
-                  <p>
-                    {vehicle.description}
-                  </p>
-
-                </div>
-              )}
-
-              {/* ACTIONS */}
+              {/* ACTION BUTTONS */}
               <div className="vehicle-detail-actions">
-
                 <Link
                   to={`/test-ride/${vehicle.id}`}
                   className="btn btn-primary"
                 >
                   <CalendarDays size={18} />
-                  Book Test Ride
-                  <ArrowRight size={17} />
+                  Book Free Test Ride
                 </Link>
 
-                <Link
-                  to={`/enquiry/${vehicle.id}`}
-                  className="btn btn-secondary"
+                <a
+                  href={`https://wa.me/919425131697?text=${whatsappMessage}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn whatsapp-btn"
                 >
-                  Enquire Now
-                </Link>
-
+                  <MessageSquare size={18} />
+                  WhatsApp Inquiry
+                </a>
               </div>
 
-              <p className="vehicle-contact-note">
-                Contact Shri Hari Suzuki for current
-                pricing, offers and availability.
-              </p>
+              <div className="showroom-assurance-box">
+                <ShieldCheck size={20} />
+                <span>100% Genuine Suzuki Warranty • Instant Finance Available at Showroom</span>
+              </div>
 
             </div>
+          </div>
+
+          {/* =========================================================
+              RICH FEATURE SHOWCASE & INTERACTIVE TABS
+             ========================================================= */}
+          <div className="vehicle-feature-tabs-section">
+
+            {/* TAB BUTTONS */}
+            <div className="feature-tabs-bar">
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "highlights" ? "active" : ""}`}
+                onClick={() => setActiveTab("highlights")}
+              >
+                <Sparkles size={18} />
+                Key Highlights & Features
+              </button>
+
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "specs" ? "active" : ""}`}
+                onClick={() => setActiveTab("specs")}
+              >
+                <FileText size={18} />
+                Technical Specifications
+              </button>
+
+              <button
+                type="button"
+                className={`tab-btn ${activeTab === "emi" ? "active" : ""}`}
+                onClick={() => setActiveTab("emi")}
+              >
+                <Calculator size={18} />
+                EMI & Down Payment Calculator
+              </button>
+            </div>
+
+            {/* TAB CONTENT: HIGHLIGHTS */}
+            {activeTab === "highlights" && (
+              <div className="tab-content-panel">
+                <h3>Vehicle Features & Highlights</h3>
+
+                {/* CATEGORY SPECIFIC FEATURE CARDS */}
+                <div className="category-features-grid">
+
+                  {/* SCOOTY / SCOOTERS FEATURES */}
+                  {!isEV && !isBike && (
+                    <>
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Fuel size={24} /></div>
+                        <h4>Suzuki Eco Performance (SEP)</h4>
+                        <p>Advanced SEP engine technology delivers smooth acceleration while giving superior mileage up to {vehicle.mileage || 52} km/l.</p>
+                      </div>
+
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Navigation size={24} /></div>
+                        <h4>Bluetooth Digital Console</h4>
+                        <p>Turn-by-turn navigation alerts, incoming call & SMS notifications right on your digital instrument cluster.</p>
+                      </div>
+
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Layers size={24} /></div>
+                        <h4>21.8L Large Storage</h4>
+                        <p>Spacious underseat storage with convenient front rack & USB mobile charging socket for easy riding.</p>
+                      </div>
+
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Lock size={24} /></div>
+                        <h4>One-Push Central Locking</h4>
+                        <p>Integrated central locking system with easy ignition start and secure shutter key protection.</p>
+                      </div>
+                    </>
+                  )}
+
+                  {/* BIKES / MOTORCYCLES FEATURES */}
+                  {!isEV && isBike && (
+                    <>
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Gauge size={24} /></div>
+                        <h4>Gixxer Performance SEP Engine</h4>
+                        <p>Derived from Suzuki GSX-R racing heritage, offering powerful throttle response and high-speed stability.</p>
+                      </div>
+
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><ShieldCheck size={24} /></div>
+                        <h4>Dual Channel ABS Brakes</h4>
+                        <p>Advanced Anti-Lock Braking System with twin disc brakes for unmatched emergency stopping power and control.</p>
+                      </div>
+
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Compass size={24} /></div>
+                        <h4>Aerodynamic Sport Styling</h4>
+                        <p>Aggressive LED headlamp, twin-muffler exhaust, and clip-on handlebars designed for sporty riding dynamics.</p>
+                      </div>
+
+                      <div className="feature-highlight-card">
+                        <div className="feature-card-icon"><Cpu size={24} /></div>
+                        <h4>Fully Digital Speedometer</h4>
+                        <p>Race-inspired digital console with gear position indicator, shift light, and real-time fuel efficiency meter.</p>
+                      </div>
+                    </>
+                  )}
+
+                  {/* EV / ELECTRIC FEATURES */}
+                  {isEV && (
+                    <>
+                      <div className="feature-highlight-card ev-style">
+                        <div className="feature-card-icon"><Zap size={24} /></div>
+                        <h4>Zero Emission Eco Mobility</h4>
+                        <p>100% Electric drivetrain delivering zero carbon emissions with whisper-quiet, smooth acceleration.</p>
+                      </div>
+
+                      <div className="feature-highlight-card ev-style">
+                        <div className="feature-card-icon"><Sparkles size={24} /></div>
+                        <h4>Fast Charge Battery System</h4>
+                        <p>Advanced Lithium-Ion battery pack with fast-charging technology (0 to 80% in 60 mins).</p>
+                      </div>
+
+                      <div className="feature-highlight-card ev-style">
+                        <div className="feature-card-icon"><IndianRupee size={24} /></div>
+                        <h4>Ultra Low Running Cost</h4>
+                        <p>Save over ₹25,000 annually with a running cost of just ₹0.15/km compared to traditional petrol scooters.</p>
+                      </div>
+
+                      <div className="feature-highlight-card ev-style">
+                        <div className="feature-card-icon"><Cpu size={24} /></div>
+                        <h4>Smart App & Regenerative Braking</h4>
+                        <p>Energy recovery during braking + smart app integration for remote battery status and range estimation.</p>
+                      </div>
+                    </>
+                  )}
+
+                </div>
+
+                {vehicle.description && (
+                  <div className="full-vehicle-description">
+                    <h4>Description & Overview</h4>
+                    <p>{vehicle.description}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB CONTENT: SPECS TABLE */}
+            {activeTab === "specs" && (
+              <div className="tab-content-panel">
+                <h3>Technical Specifications</h3>
+
+                <table className="specs-detail-table">
+                  <tbody>
+                    <tr>
+                      <td>Model & Variant</td>
+                      <td><strong>{vehicle.name} {vehicle.variant || ''}</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Vehicle Category</td>
+                      <td><strong>{vehicle.category || (isEV ? 'ELECTRIC' : isBike ? 'BIKE' : 'SCOOTER')}</strong></td>
+                    </tr>
+                    {vehicle.engineCc && (
+                      <tr>
+                        <td>Engine Displacement</td>
+                        <td><strong>{vehicle.engineCc} cc</strong></td>
+                      </tr>
+                    )}
+                    {vehicle.mileage && (
+                      <tr>
+                        <td>{isEV ? "Battery Range" : "Fuel Efficiency (Mileage)"}</td>
+                        <td><strong>{vehicle.mileage} {isEV ? "km / full charge" : "km/l"}</strong></td>
+                      </tr>
+                    )}
+                    {vehicle.fuelType && (
+                      <tr>
+                        <td>Fuel / Power Type</td>
+                        <td><strong>{vehicle.fuelType}</strong></td>
+                      </tr>
+                    )}
+                    {vehicle.transmission && (
+                      <tr>
+                        <td>Transmission Type</td>
+                        <td><strong>{vehicle.transmission}</strong></td>
+                      </tr>
+                    )}
+                    {vehicle.color && (
+                      <tr>
+                        <td>Available Color</td>
+                        <td><strong>{vehicle.color}</strong></td>
+                      </tr>
+                    )}
+                    <tr>
+                      <td>Condition</td>
+                      <td><strong>{vehicle.vehicleType === "NEW" ? "Brand New (Official Warranty)" : "Pre-Owned (Quality Checked)"}</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Showroom Location</td>
+                      <td><strong>Shri Hari Suzuki, Main Showroom</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* TAB CONTENT: EMI CALCULATOR */}
+            {activeTab === "emi" && (
+              <div className="tab-content-panel">
+                <h3>Price & Estimated EMI Breakdown</h3>
+
+                <div className="emi-breakdown-container">
+                  <div className="emi-box">
+                    <span>Ex-Showroom Price</span>
+                    <strong>₹{priceNum.toLocaleString("en-IN")}</strong>
+                  </div>
+
+                  <div className="emi-box">
+                    <span>Min Down Payment (20%)</span>
+                    <strong>₹{downPayment.toLocaleString("en-IN")}</strong>
+                  </div>
+
+                  <div className="emi-box highlight">
+                    <span>Monthly EMI (36 Months @ 9.5%)</span>
+                    <strong>₹{estimatedEMI.toLocaleString("en-IN")} / mo*</strong>
+                  </div>
+                </div>
+
+                <p className="emi-disclaimer">
+                  *Disclaimer: EMI calculations are approximate. Final loan interest rates and down payment depend on individual bank/finance approvals at Shri Hari Suzuki showroom.
+                </p>
+              </div>
+            )}
 
           </div>
 
         </div>
       </section>
+
     </main>
   );
 };
