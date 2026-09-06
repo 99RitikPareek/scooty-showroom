@@ -16,8 +16,11 @@ import {
   Lock,
   Layers,
   FileText,
-  CheckCircle,
-} from "lucide-react";
+  RotateCw,
+  Palette,
+  Play,
+  Pause,
+  } from "lucide-react";
 
 import VehicleSkeleton from "../../components/vehicle/VehicleSkeleton";
 import vehicleService from "../../services/vehicleService";
@@ -27,6 +30,7 @@ import type { Vehicle } from "../../types/vehicle";
 interface CustomFeatureItem {
   title: string;
   description: string;
+  imageUrl?: string;
 }
 
 const VehicleDetailsPage = () => {
@@ -37,6 +41,171 @@ const VehicleDetailsPage = () => {
   const [error, setError] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"highlights" | "specs">("highlights");
+
+
+
+  // 360 Viewer state
+  const [currentAngleIndex, setCurrentAngleIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [isAutoSpinning, setIsAutoSpinning] = useState(false);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
+
+  // Dynamic Color 360 State
+  const [activeColorGroupName, setActiveColorGroupName] = useState<string | null>(null);
+
+  // Group images dynamically by Color Name
+  interface ColorGroup {
+    colorName: string;
+    swatch: string;
+    images: NonNullable<Vehicle['images']>;
+  }
+
+  const colorGroups: ColorGroup[] = [];
+
+  if (vehicle?.images && vehicle.images.length > 0) {
+    const groupMap = new Map<string, NonNullable<Vehicle['images']>>();
+
+    vehicle.images.forEach((img) => {
+      let color = "Metallic Triton Blue";
+      const alt = (img.altText || "").trim();
+      
+      if (alt.includes("Color:")) {
+        const parts = alt.split("|");
+        const colorPart = parts.find((p) => p.includes("Color:"));
+        if (colorPart) {
+          color = colorPart.replace("Color:", "").trim();
+        }
+      } else if (alt) {
+        color = alt;
+      }
+
+      if (!groupMap.has(color)) {
+        groupMap.set(color, []);
+      }
+      groupMap.get(color)!.push(img);
+    });
+
+    // Also parse vehicle.color string set by Admin (e.g. "Solid Ice Green, Metallic Mat Stellar Blue, Pearl Grace White")
+    if (vehicle?.color) {
+      const adminColors = vehicle.color.split(",").map(c => c.trim()).filter(Boolean);
+      adminColors.forEach(ac => {
+        if (!groupMap.has(ac)) {
+          // If no image explicitly mapped, attach fallback vehicle images
+          groupMap.set(ac, vehicle.images || []);
+        }
+      });
+    }
+
+    groupMap.forEach((imgs, colorName) => {
+      let swatch = "#3b82f6";
+      const lower = colorName.toLowerCase();
+      if (lower.includes("red") && (lower.includes("gray") || lower.includes("grey"))) {
+        swatch = "linear-gradient(135deg, #dc2626 50%, #4b5563 50%)";
+      } else if (lower.includes("orange")) {
+        swatch = lower.includes("black") ? "linear-gradient(135deg, #f97316 50%, #111827 50%)" : "#f97316";
+      } else if (lower.includes("aqua") || (lower.includes("silver") && lower.includes("blue"))) {
+        swatch = "linear-gradient(135deg, #06b6d4 50%, #9ca3af 50%)";
+      } else if (lower.includes("green") || lower.includes("ice")) {
+        swatch = "linear-gradient(135deg, #059669 50%, #6ee7b7 50%)";
+      } else if (lower.includes("beige")) {
+        swatch = "#fef08a";
+      } else if (lower.includes("bronze")) {
+        swatch = "linear-gradient(135deg, #92400e 50%, #78350f 50%)";
+      } else if (lower.includes("white")) {
+        swatch = "#f8fafc";
+      } else if (lower.includes("black")) {
+        swatch = "linear-gradient(135deg, #111827 50%, #374151 50%)";
+      } else if (lower.includes("blue") && lower.includes("white")) {
+        swatch = "linear-gradient(135deg, #2563eb 50%, #f8fafc 50%)";
+      } else if (lower.includes("blue") || lower.includes("triton") || lower.includes("stellar")) {
+        swatch = "#2563eb";
+      } else if (lower.includes("red") || lower.includes("mira")) {
+        swatch = "#dc2626";
+      } else if (lower.includes("gray") || lower.includes("grey") || lower.includes("fibroin")) {
+        swatch = "#4b5563";
+      }
+
+      colorGroups.push({
+        colorName,
+        swatch,
+        images: imgs,
+      });
+    });
+  }
+
+  const activeGroup =
+    colorGroups.find((g) => g.colorName === activeColorGroupName) || colorGroups[0];
+
+  const currentAngleImages = activeGroup ? activeGroup.images : vehicle?.images || [];
+
+  // Auto 360 Spin Loop
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+    if (isAutoSpinning && currentAngleImages && currentAngleImages.length > 0) {
+      interval = setInterval(() => {
+        setCurrentAngleIndex((prev) => (prev + 1) % currentAngleImages.length);
+      }, 1200);
+    }
+    return () => clearInterval(interval);
+  }, [isAutoSpinning, currentAngleImages]);
+
+  // Drag & Tilt handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStartX(e.clientX);
+     // Switch to 360 view on drag
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && vehicle?.images && vehicle.images.length > 1) {
+      const deltaX = e.clientX - dragStartX;
+      const threshold = 16;
+      if (Math.abs(deltaX) > threshold) {
+        const step = deltaX > 0 ? -1 : 1;
+        const count = currentAngleImages.length;
+        setCurrentAngleIndex((prev) => (prev + step + count) % count);
+        setDragStartX(e.clientX);
+      }
+    } else if (!vehicle?.images || vehicle.images.length <= 1) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const rotY = (x / (rect.width / 2)) * 14;
+      const rotX = -(y / (rect.height / 2)) * 14;
+      setTilt({ rotateX: rotX, rotateY: rotY });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setTilt({ rotateX: 0, rotateY: 0 });
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    setTilt({ rotateX: 0, rotateY: 0 });
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      setIsDragging(true);
+      setDragStartX(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isDragging && e.touches.length > 0 && vehicle?.images && vehicle.images.length > 1) {
+      const deltaX = e.touches[0].clientX - dragStartX;
+      const threshold = 16;
+      if (Math.abs(deltaX) > threshold) {
+        const step = deltaX > 0 ? -1 : 1;
+        const count = currentAngleImages.length;
+        setCurrentAngleIndex((prev) => (prev + step + count) % count);
+        setDragStartX(e.touches[0].clientX);
+      }
+    }
+  };
 
   useEffect(() => {
     const loadVehicle = async () => {
@@ -97,8 +266,17 @@ const VehicleDetailsPage = () => {
     );
   }
 
+  const hasMultipleImages = Boolean(currentAngleImages && currentAngleImages.length > 1);
+  
+  const activeImageObj = hasMultipleImages
+    ? currentAngleImages[currentAngleIndex % currentAngleImages.length]
+    : currentAngleImages[0];
+
   const activeImage =
-    selectedImage || vehicle.primaryImageUrl || vehicle.images?.[0]?.imageUrl;
+    activeImageObj?.imageUrl ||
+    selectedImage ||
+    vehicle?.primaryImageUrl ||
+    vehicle?.images?.[0]?.imageUrl;
 
   const category = (vehicle.category || "").toUpperCase();
   const fuelTypeUpper = (vehicle.fuelType || "").toUpperCase();
@@ -150,20 +328,55 @@ const VehicleDetailsPage = () => {
 
           <div className="vehicle-details-layout">
 
-            {/* GALLERY */}
+            {/* GALLERY WITH 360 INTERACTIVE ROTATION */}
             <div className="vehicle-details-gallery">
-              <div className="vehicle-main-image">
-                {activeImage ? (
-                  <img
-                    src={getImageUrl(activeImage)}
-                    alt={`${vehicle.brandName} ${vehicle.name}`}
-                  />
-                ) : (
-                  <div className="vehicle-image-placeholder">
-                    <Bike size={72} />
-                    <span>Vehicle image unavailable</span>
-                  </div>
-                )}
+              <div
+                className={`vehicle-main-image v360-container ${isDragging ? "is-dragging" : ""}`}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseLeave}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleMouseUp}
+                style={{
+                  perspective: "1000px",
+                  cursor: hasMultipleImages ? (isDragging ? "grabbing" : "grab") : "pointer",
+                  userSelect: "none"
+                }}
+              >
+                <div
+                  className="v360-image-wrapper"
+                  style={{
+                    transform: `perspective(1000px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+                    transition: isDragging ? "none" : "transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1)",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
+                >
+                  {activeImage ? (
+                    <img
+                      src={getImageUrl(activeImage)}
+                      alt={`${vehicle.brandName} ${vehicle.name}`}
+                      draggable={false}
+                    />
+                  ) : (
+                    <div className="vehicle-image-placeholder">
+                      <Bike size={72} />
+                      <span>Vehicle image unavailable</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* 360 High Tech Overlay Badge */}
+                <div className="v360-overlay-badge">
+                  <RotateCw className={isAutoSpinning ? "spin-icon-anim" : ""} size={16} />
+                  <span>360° Interactive View</span>
+                  <span className="v360-hint">• Drag / Touch Move to Rotate</span>
+                </div>
 
                 <span className="vehicle-type-badge">
                   {vehicle.vehicleType === "NEW" ? "NEW" : "PRE-OWNED"}
@@ -186,15 +399,91 @@ const VehicleDetailsPage = () => {
                 )}
               </div>
 
-              {vehicle.images && vehicle.images.length > 1 && (
+              {/* 360 INTERACTIVE CONTROLS BAR */}
+              <div className="v360-controls-bar">
+                <button
+                  type="button"
+                  className={`v360-spin-btn ${isAutoSpinning ? "active" : ""}`}
+                  onClick={() => setIsAutoSpinning(!isAutoSpinning)}
+                >
+                  {isAutoSpinning ? <Pause size={16} /> : <Play size={16} />}
+                  <span>{isAutoSpinning ? "Pause 360° Spin" : "Auto 360° Spin"}</span>
+                </button>
+
+                {hasMultipleImages && (
+                  <div className="v360-angle-pills">
+                    {currentAngleImages.map((image, index) => {
+                      const angleDeg = Math.round((index / currentAngleImages.length) * 360);
+                      const isCurrent = currentAngleIndex % currentAngleImages.length === index;
+                      return (
+                        <button
+                          key={image.id || index}
+                          type="button"
+                          className={`v360-angle-pill ${isCurrent ? "active" : ""}`}
+                          onClick={() => {
+                            setCurrentAngleIndex(index);
+                            setSelectedImage(image.imageUrl);
+                          }}
+                          title={`View angle ${angleDeg}°`}
+                        >
+                          {angleDeg}°
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* DYNAMIC MULTI-COLOR 360 PALETTE SELECTOR */}
+              {colorGroups.length > 0 && (
+                <div className="official-color-palette-card">
+                  <div className="color-palette-header">
+                    <Palette size={18} />
+                    <span>Official Suzuki Color Options</span>
+                  </div>
+                  
+                  <div className="color-swatches-grid">
+                    {colorGroups.map((group) => {
+                      const isCurrent = activeGroup?.colorName === group.colorName;
+                      return (
+                        <button
+                          key={group.colorName}
+                          type="button"
+                          className={`color-swatch-btn ${isCurrent ? 'active' : ''}`}
+                          onClick={() => {
+                            setActiveColorGroupName(group.colorName);
+                            setCurrentAngleIndex(0);
+                          }}
+                          title={group.colorName}
+                        >
+                          <span className="swatch-circle" style={{ background: group.swatch }} />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="active-color-name">
+                    {activeGroup?.colorName || vehicle.color || "Standard Variant"}
+                  </div>
+                </div>
+              )}
+
+              {currentAngleImages && currentAngleImages.length > 1 && (
                 <div className="vehicle-thumbnail-grid">
-                  {vehicle.images.map((image) => (
+                  {currentAngleImages.map((image, index) => (
                     <img
                       key={image.id}
                       src={getImageUrl(image.imageUrl)}
-                      onClick={() => setSelectedImage(image.imageUrl)}
+                      onClick={() => {
+                        setSelectedImage(image.imageUrl);
+                        setCurrentAngleIndex(index);
+                      }}
                       style={{ cursor: "pointer" }}
-                      className={activeImage === image.imageUrl ? "active-thumb" : ""}
+                      className={
+                        currentAngleIndex % currentAngleImages.length === index
+                          ? "active-thumb"
+                          : ""
+                      }
                       alt={image.altText || `${vehicle.name} image`}
                     />
                   ))}
@@ -351,15 +640,45 @@ const VehicleDetailsPage = () => {
                 {/* ADMIN CUSTOM FEATURES GRID */}
                 {customFeatures.length > 0 ? (
                   <div className="category-features-grid">
-                    {customFeatures.map((item, idx) => (
-                      <div key={idx} className="feature-highlight-card">
-                        <div className="feature-card-icon">
-                          <CheckCircle size={22} />
+                    {customFeatures.map((item, idx) => {
+                      const text = ((item.title || '') + ' ' + (item.description || '')).toLowerCase();
+                      let imgUrl = item.imageUrl || '';
+                      if (!imgUrl) {
+                        if (text.includes('exhaust') || text.includes('muffler')) {
+                          imgUrl = '/features/bike-exhaust.jpg';
+                        } else if (text.includes('engine') || text.includes('sep') || text.includes('performance') || text.includes('torque') || text.includes('power')) {
+                          imgUrl = isBike ? '/features/bike-engine.jpg' : '/features/scooter-engine.jpg';
+                        } else if (text.includes('abs') || text.includes('brake') || text.includes('disc') || text.includes('stopping')) {
+                          imgUrl = '/features/abs-brake.jpg';
+                        } else if (text.includes('console') || text.includes('bluetooth') || text.includes('navigation') || text.includes('display') || text.includes('tft') || text.includes('dashboard') || text.includes('connect')) {
+                          imgUrl = '/features/tft-console.jpg';
+                        } else if (text.includes('fuel lid') || text.includes('fuel fill') || text.includes('external fuel') || text.includes('fueling cap') || text.includes('refueling') || text.includes('fuel filling')) {
+                          imgUrl = '/features/scooter-fuel-lid.jpg';
+                        } else if (text.includes('storage') || text.includes('boot') || text.includes('glovebox') || text.includes('usb') || text.includes('rack')) {
+                          imgUrl = '/features/scooter-storage.jpg';
+                        } else if (text.includes('headlamp') || text.includes('led') || text.includes('light') || text.includes('styling') || text.includes('lamp') || text.includes('fairing')) {
+                          imgUrl = '/features/led-headlight.jpg';
+                        } else if (text.includes('seat') || text.includes('comfort') || text.includes('floorboard') || text.includes('posture') || text.includes('ergonomics')) {
+                          imgUrl = '/features/comfort-seat.jpg';
+                        } else {
+                          imgUrl = isBike ? '/features/bike-engine.jpg' : '/features/tft-console.jpg';
+                        }
+                      }
+                      return (
+                        <div key={idx} className="feature-highlight-card with-image-card" style={{ background: '#ffffff', overflow: 'hidden', padding: 0 }}>
+                          <div style={{ position: 'relative', width: '100%', height: '160px', background: '#0f172a', overflow: 'hidden' }}>
+                            <img src={imgUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }} />
+                            <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(15, 23, 42, 0.75)', color: '#fff', fontSize: '0.75rem', fontWeight: 600, padding: '4px 10px', borderRadius: '12px', backdropFilter: 'blur(4px)' }}>
+                              ✨ Highlight
+                            </div>
+                          </div>
+                          <div style={{ padding: '20px' }}>
+                            <h4 style={{ margin: '0 0 8px 0', fontSize: '1.05rem', color: '#0f172a', fontWeight: 700 }}>{item.title}</h4>
+                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', lineHeight: '1.5' }}>{item.description}</p>
+                          </div>
                         </div>
-                        <h4>{item.title}</h4>
-                        <p>{item.description}</p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   /* DEFAULT CATEGORY FEATURES FALLBACK IF NO CUSTOM FEATURES FILLED BY ADMIN */

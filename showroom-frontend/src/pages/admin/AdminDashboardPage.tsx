@@ -270,7 +270,7 @@ const AdminDashboardPage = () => {
         </section>
 
         {/* RECENT TEST RIDES & ENQUIRIES GRID */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem", marginBottom: "2rem" }}>
           {/* RECENT TEST RIDES */}
           <section className="admin-dashboard-section" style={{ margin: 0 }}>
             <div className="admin-section-heading">

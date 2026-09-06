@@ -762,15 +762,73 @@ const AdminVehicleFormPage = () => {
               </select>
             </div>
 
-            <div className="admin-form-group">
-              <label htmlFor="color">Color</label>
+            <div className="admin-form-group" style={{ gridColumn: "1 / -1" }}>
+              <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px", fontWeight: 700 }}>
+                <span>🎨 Showroom Available Color Palette</span>
+                <span style={{ fontSize: "0.8rem", color: "#2563eb", fontWeight: 500 }}>Select colors available in showroom</span>
+              </label>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "12px", background: "#f8fafc", padding: "12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                {[
+                  { name: "Metallic Triton Blue", bg: "#2563eb", text: "#fff" },
+                  { name: "Glass Sparkle Black", bg: "#111827", text: "#fff" },
+                  { name: "Solid Ice Green", bg: "#059669", text: "#fff" },
+                  { name: "Pearl Grace White", bg: "#f8fafc", text: "#0f172a", border: "1px solid #cbd5e1" },
+                  { name: "Pearl Shiny Beige", bg: "#fef08a", text: "#78350f" },
+                  { name: "Pearl Mat Aqua Silver", bg: "#06b6d4", text: "#fff" },
+                  { name: "Metallic Royal Bronze", bg: "#78350f", text: "#fff" },
+                  { name: "Pearl Blaze Orange", bg: "#ea580c", text: "#fff" },
+                  { name: "Metallic Matte Grey", bg: "#4b5563", text: "#fff" },
+                  { name: "Met. Oort Gray + Pearl Mira Red", bg: "linear-gradient(135deg, #dc2626 50%, #4b5563 50%)", text: "#fff" },
+                ].map((c) => {
+                  const selectedColors = (form.color || "").split(",").map(s => s.trim()).filter(Boolean);
+                  const isSelected = selectedColors.includes(c.name);
+
+                  return (
+                    <button
+                      key={c.name}
+                      type="button"
+                      onClick={() => {
+                        let updated = [...selectedColors];
+                        if (isSelected) {
+                          updated = updated.filter(name => name !== c.name);
+                        } else {
+                          updated.push(c.name);
+                        }
+                        setForm(prev => ({ ...prev, color: updated.join(", ") }));
+                      }}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "6px 12px",
+                        borderRadius: "20px",
+                        fontSize: "0.82rem",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        background: c.bg,
+                        color: c.text,
+                        border: isSelected ? "3px solid #2563eb" : (c.border || "none"),
+                        boxShadow: isSelected ? "0 0 0 2px rgba(37, 99, 235, 0.4)" : "0 1px 3px rgba(0,0,0,0.1)",
+                        transform: isSelected ? "scale(1.04)" : "scale(1)",
+                        transition: "all 0.15s ease",
+                      }}
+                    >
+                      <span>{isSelected ? "✓" : "+"}</span>
+                      <span>{c.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
               <input
                 id="color"
                 name="color"
                 type="text"
                 value={form.color ?? ""}
                 onChange={handleChange}
-                placeholder="e.g. Metallic Black"
+                placeholder="Selected colors list (e.g. Metallic Triton Blue, Glass Sparkle Black, Solid Ice Green)"
+                style={{ width: "100%", padding: "8px 12px", fontSize: "0.88rem", border: "1px solid #cbd5e1", borderRadius: "6px" }}
               />
             </div>
           </div>
@@ -1102,9 +1160,56 @@ const AdminVehicleFormPage = () => {
                       </p>
 
                       <div style={{ display: "grid", gap: "6px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px" }}>
+                          <select
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (!val) return;
+                              const current = item.altText || "";
+                              let anglePart = "Angle: 90";
+                              if (current.includes("Angle:")) {
+                                anglePart = current.split("|").find(p => p.includes("Angle:")) || anglePart;
+                              }
+                              handleUpdateSelectedFileAlt(item.id, `Color: ${val} | ${anglePart.trim()}`);
+                            }}
+                            style={{ fontSize: "0.75rem", padding: "4px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#f8fafc" }}
+                          >
+                            <option value="">Color Name...</option>
+                            <option value="Metallic Triton Blue">Triton Blue</option>
+                            <option value="Glass Sparkle Black">Sparkle Black</option>
+                            <option value="Solid Ice Green">Ice Green</option>
+                            <option value="Pearl Grace White">Pearl White</option>
+                            <option value="Pearl Shiny Beige">Shiny Beige</option>
+                            <option value="Pearl Mat Aqua Silver">Aqua Silver</option>
+                            <option value="Metallic Royal Bronze">Royal Bronze</option>
+                            <option value="Pearl Blaze Orange">Blaze Orange</option>
+                            <option value="Metallic Matte Grey">Matte Grey</option>
+                          </select>
+
+                          <select
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === "") return;
+                              const current = item.altText || "";
+                              let colorPart = "Color: Glass Sparkle Black";
+                              if (current.includes("Color:")) {
+                                colorPart = current.split("|").find(p => p.includes("Color:")) || colorPart;
+                              }
+                              handleUpdateSelectedFileAlt(item.id, `${colorPart.trim()} | Angle: ${val}`);
+                            }}
+                            style={{ fontSize: "0.75rem", padding: "4px", borderRadius: "4px", border: "1px solid #cbd5e1", background: "#f8fafc" }}
+                          >
+                            <option value="">360 Angle...</option>
+                            <option value="0">0° (Front View)</option>
+                            <option value="90">90° (Right Side)</option>
+                            <option value="180">180° (Rear View)</option>
+                            <option value="270">270° (Left Side)</option>
+                          </select>
+                        </div>
+
                         <input
                           type="text"
-                          placeholder="Alt text (e.g. Front Angle)"
+                          placeholder="Color & Angle Tag (e.g. Color: Glass Sparkle Black | Angle: 90)"
                           value={item.altText}
                           onChange={(e) => handleUpdateSelectedFileAlt(item.id, e.target.value)}
                           style={{ padding: "4px 8px", fontSize: "0.8rem", border: "1px solid #cbd5e1", borderRadius: "4px" }}

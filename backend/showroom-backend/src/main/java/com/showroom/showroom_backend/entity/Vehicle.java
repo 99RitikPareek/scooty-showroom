@@ -50,7 +50,7 @@ public class Vehicle {
     @Column(name = "fuel_type", length = 50)
     private String fuelType;
 
-    @Column(length = 50)
+    @Column(length = 500)
     private String transmission;
 
     @Column(length = 50)

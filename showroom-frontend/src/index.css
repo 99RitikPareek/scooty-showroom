@@ -9688,3 +9688,487 @@ select {
   border: 2px solid #E60012 !important;
   transform: scale(1.05);
 }
+
+
+/* =========================================================
+   360 INTERACTIVE VEHICLE VIEWER
+========================================================= */
+
+.v360-container {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  background: radial-gradient(circle at center, #ffffff 40%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.v360-container:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 15px 40px rgba(30, 58, 138, 0.08);
+}
+
+.v360-container.is-dragging {
+  cursor: grabbing !important;
+}
+
+.v360-overlay-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+
+.v360-overlay-badge svg {
+  color: #38bdf8;
+}
+
+.v360-overlay-badge .v360-hint {
+  color: #cbd5e1;
+  font-weight: 400;
+  font-size: 0.76rem;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-icon-anim {
+  animation: spinSlow 6s linear infinite;
+}
+
+.v360-controls-bar {
+  margin-top: 14px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.v360-spin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+}
+
+.v360-spin-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+}
+
+.v360-spin-btn.active {
+  background: #dc2626;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.v360-spin-btn.active:hover {
+  background: #b91c1c;
+}
+
+.v360-angle-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.v360-angle-pill {
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.v360-angle-pill:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.v360-angle-pill.active {
+  background: #1e3a8a;
+  color: #ffffff;
+  border-color: #1e3a8a;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
+}
+
+
+/* =========================================================
+   OFFICIAL DEALER COLOR PALETTE SELECTOR
+========================================================= */
+
+.official-color-palette-card {
+  margin-top: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  text-align: center;
+}
+
+.color-palette-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+
+.color-swatches-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.color-swatch-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 2px solid transparent;
+  background: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.color-swatch-btn:hover {
+  transform: scale(1.15);
+  border-color: #94a3b8;
+}
+
+.color-swatch-btn.active {
+  border-color: #1e3a8a;
+  transform: scale(1.18);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+}
+
+.swatch-circle {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.active-color-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 14px;
+}
+
+.official-dealer-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  color: #166534;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.official-dealer-link-btn:hover {
+  background: #dcfce7;
+  color: #14532d;
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.15);
+}
+
+/* ==========================================================================
+   MOBILE RESPONSIVE OPTIMIZATIONS (ADMIN DASHBOARD & CUSTOMER WEBSITE)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  /* Vehicle 360 Viewer Mobile Layout */
+  .v360-container {
+    height: 320px !important;
+    min-height: 280px !important;
+    padding: 10px !important;
+    border-radius: 16px !important;
+    touch-action: pan-y pinch-zoom !important;
+  }
+
+  .v360-image-wrapper img {
+    max-height: 240px !important;
+    object-fit: contain !important;
+  }
+
+  .v360-overlay-badge {
+    top: 10px !important;
+    left: 10px !important;
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+  }
+
+  .v360-controls-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .v360-spin-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+  }
+
+  .v360-angle-pills {
+    width: 100% !important;
+    justify-content: space-around !important;
+    overflow-x: auto !important;
+    padding-bottom: 4px !important;
+  }
+
+  .angle-pill-btn {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    min-width: 50px !important;
+  }
+
+  /* Color Palette Swatches Mobile Layout */
+  .vehicle-details-colors-card {
+    padding: 16px !important;
+    margin-top: 16px !important;
+  }
+
+  .color-swatch-list {
+    gap: 8px !important;
+  }
+
+  .color-swatch-card {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    min-height: 44px !important;
+  }
+
+  /* Admin Dashboard Mobile Form Cards */
+  .admin-form-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .admin-form-actions {
+    flex-direction: column-reverse !important;
+    gap: 10px !important;
+  }
+
+  .admin-primary-btn, .admin-secondary-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .v360-container {
+    height: 270px !important;
+    min-height: 250px !important;
+  }
+
+  .v360-image-wrapper img {
+    max-height: 200px !important;
+  }
+
+  .vehicle-details-title-row h1 {
+    font-size: 22px !important;
+  }
+
+  .vehicle-price-badge {
+    font-size: 20px !important;
+  }
+}
+
+
+/* =========================================================
+   ENHANCED MOBILE RESPONSIVENESS & TOUCH UX
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .admin-page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .admin-page-header-actions {
+    width: 100% !important;
+    display: flex !important;
+    gap: 10px !important;
+  }
+
+  .admin-page-header-actions .admin-primary-btn {
+    flex: 1 !important;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .admin-stat-card {
+    min-height: 90px !important;
+    padding: 14px 12px !important;
+    gap: 10px !important;
+  }
+
+  .admin-stat-icon {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+  }
+
+  .admin-stat-card strong {
+    font-size: 20px !important;
+  }
+
+  .admin-stat-card span {
+    font-size: 11px !important;
+  }
+
+  .admin-quick-actions {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .admin-action-card {
+    padding: 15px !important;
+    min-height: auto !important;
+  }
+
+  .admin-filter-card {
+    grid-template-columns: 1fr !important;
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+
+  .admin-table-card {
+    border-radius: 12px !important;
+  }
+
+  .admin-table-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .admin-vehicles-table,
+  .admin-test-rides-table,
+  .admin-enquiries-table {
+    min-width: 800px !important;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .admin-form-card {
+    padding: 18px 14px !important;
+  }
+
+  .admin-form-checkboxes {
+    flex-direction: column !important;
+  }
+
+  .admin-checkbox {
+    width: 100% !important;
+  }
+
+  .category-filter-pills-bar {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 16px !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .category-filter-pills-bar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .category-pill {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-page-header h1 {
+    font-size: 24px !important;
+  }
+
+  .admin-stat-card {
+    padding: 12px 14px !important;
+  }
+
+  .admin-vehicle-info {
+    min-width: 180px !important;
+  }
+}
