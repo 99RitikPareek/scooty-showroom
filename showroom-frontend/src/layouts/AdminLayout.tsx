@@ -69,7 +69,7 @@ const AdminLayout = () => {
 
           <div className="admin-brand-text">
             <strong>Showroom</strong>
-            <span>Administration</span>
+            <span>Administration • v2.0 Mobile</span>
           </div>
 
         </div>

@@ -123,7 +123,7 @@ const AdminDashboardPage = () => {
       {/* HEADER */}
       <div className="admin-page-header">
         <div>
-          <span className="admin-page-eyebrow">SHOWROOM OVERVIEW</span>
+          <span className="admin-page-eyebrow">SHOWROOM OVERVIEW • V2.0 MOBILE</span>
           <h1>Dashboard</h1>
           <p>Manage your showroom operations, inventory, test rides, and enquiries from one place.</p>
         </div>
