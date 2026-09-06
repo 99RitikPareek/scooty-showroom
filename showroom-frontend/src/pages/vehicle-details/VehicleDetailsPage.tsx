@@ -683,43 +683,44 @@ const VehicleDetailsPage = () => {
                 {customFeatures.length > 0 ? (
                   <div className="category-features-grid">
                     {customFeatures.map((item, idx) => {
-                                            let imgUrl = item.imageUrl || '';
-                      if (!imgUrl) {
-                        const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
-                        if (text.includes("exhaust") || text.includes("muffler")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/bike_twin_exhaust_1788629386677.jpg");
-                        } else if (text.includes("engine") || text.includes("sep") || text.includes("power") || text.includes("motor")) {
-                          imgUrl = isBike
-                            ? getImageUrl("/uploads/vehicles/bike_engine_block_1788629360348.jpg")
-                            : getImageUrl("/uploads/vehicles/scooter_engine_cvt_1788629571404.jpg");
-                        } else if (text.includes("abs") || text.includes("brake") || text.includes("disc") || text.includes("stopping")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_abs_disc_brake_1788627388211.jpg");
-                        } else if (text.includes("console") || text.includes("bluetooth") || text.includes("navigation") || text.includes("display") || text.includes("tft") || text.includes("dashboard") || text.includes("connect")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_digital_tft_console_1788627425512.jpg");
-                        } else if (text.includes("fuel lid") || text.includes("fuel fill") || text.includes("external fuel") || text.includes("fueling cap") || text.includes("refueling") || text.includes("fuel cap")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/scooter_fuel_lid_rear_1788629695842.jpg");
-                        } else if (text.includes("storage") || text.includes("boot") || text.includes("glovebox") || text.includes("usb") || text.includes("rack")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/scooter_underseat_storage_1788629750085.jpg");
-                        } else if (text.includes("headlamp") || text.includes("led") || text.includes("light") || text.includes("lamp") || text.includes("fairing")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_led_headlamp_1788627473237.jpg");
-                        } else if (text.includes("seat") || text.includes("comfort") || text.includes("floorboard") || text.includes("ergonomics")) {
-                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_comfort_seat_1788627543364.jpg");
-                        } else {
-                          imgUrl = activeImage ? getImageUrl(activeImage) : (vehicle.primaryImageUrl ? getImageUrl(vehicle.primaryImageUrl) : "");
-                        }
+                      const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
+                      let IconComponent = Sparkles;
+                      let iconColor = "#2563eb";
+                      let bgGradient = "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)";
+
+                      if (text.includes("engine") || text.includes("sep") || text.includes("eass") || text.includes("power") || text.includes("performance")) {
+                        IconComponent = Gauge;
+                        iconColor = "#d97706";
+                        bgGradient = "linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)";
+                      } else if (text.includes("console") || text.includes("bluetooth") || text.includes("navigation") || text.includes("tft") || text.includes("dashboard") || text.includes("connect")) {
+                        IconComponent = Navigation;
+                        iconColor = "#2563eb";
+                        bgGradient = "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)";
+                      } else if (text.includes("storage") || text.includes("boot") || text.includes("usb") || text.includes("glovebox") || text.includes("rack")) {
+                        IconComponent = Layers;
+                        iconColor = "#059669";
+                        bgGradient = "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)";
+                      } else if (text.includes("abs") || text.includes("brake") || text.includes("lock") || text.includes("safety") || text.includes("stopping")) {
+                        IconComponent = ShieldCheck;
+                        iconColor = "#dc2626";
+                        bgGradient = "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)";
+                      } else if (text.includes("electric") || text.includes("ev") || text.includes("battery") || text.includes("charging") || text.includes("zero emission")) {
+                        IconComponent = Zap;
+                        iconColor = "#16a34a";
+                        bgGradient = "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)";
+                      } else if (text.includes("foot") || text.includes("bodywork") || text.includes("styling") || text.includes("ergonomics") || text.includes("headlamp") || text.includes("led")) {
+                        IconComponent = Sparkles;
+                        iconColor = "#7c3aed";
+                        bgGradient = "linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)";
                       }
+
                       return (
-                        <div key={idx} className="feature-highlight-card with-image-card" style={{ background: '#ffffff', overflow: 'hidden', padding: 0 }}>
-                          <div style={{ position: 'relative', width: '100%', height: '160px', background: '#0f172a', overflow: 'hidden' }}>
-                            <img src={imgUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }} />
-                            <div style={{ position: 'absolute', top: '10px', left: '10px', background: 'rgba(15, 23, 42, 0.75)', color: '#fff', fontSize: '0.75rem', fontWeight: 600, padding: '4px 10px', borderRadius: '12px', backdropFilter: 'blur(4px)' }}>
-                              ✨ Highlight
-                            </div>
+                        <div key={idx} className="feature-highlight-card" style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+                          <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: bgGradient, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px", color: iconColor }}>
+                            <IconComponent size={26} />
                           </div>
-                          <div style={{ padding: '20px' }}>
-                            <h4 style={{ margin: '0 0 8px 0', fontSize: '1.05rem', color: '#0f172a', fontWeight: 700 }}>{item.title}</h4>
-                            <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem', lineHeight: '1.5' }}>{item.description}</p>
-                          </div>
+                          <h4 style={{ margin: "0 0 8px 0", fontSize: "1.08rem", color: "#0f172a", fontWeight: 700 }}>{item.title}</h4>
+                          <p style={{ margin: 0, color: "#64748b", fontSize: "0.92rem", lineHeight: "1.6" }}>{item.description}</p>
                         </div>
                       );
                     })}
