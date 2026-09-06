@@ -112,12 +112,14 @@ const VehicleDetailsPage = () => {
         swatch = "#fef08a";
       } else if (lower.includes("bronze")) {
         swatch = "linear-gradient(135deg, #92400e 50%, #78350f 50%)";
-      } else if (lower.includes("white")) {
-        swatch = "#f8fafc";
+      } else if (lower.includes("blue") && lower.includes("white") || (lower.includes("white") && lower.includes("stellar")) || lower.includes("glacier")) {
+        swatch = "linear-gradient(135deg, #ffffff 50%, #2563eb 50%)";
       } else if (lower.includes("black")) {
         swatch = "linear-gradient(135deg, #111827 50%, #374151 50%)";
-      } else if (lower.includes("blue") && lower.includes("white")) {
-        swatch = "linear-gradient(135deg, #2563eb 50%, #f8fafc 50%)";
+      } else if (lower.includes("blue") || lower.includes("triton") || lower.includes("stellar")) {
+        swatch = "#2563eb";
+      } else if (lower.includes("white")) {
+        swatch = "#ffffff";
       } else if (lower.includes("blue") || lower.includes("triton") || lower.includes("stellar")) {
         swatch = "#2563eb";
       } else if (lower.includes("red") || lower.includes("mira")) {
