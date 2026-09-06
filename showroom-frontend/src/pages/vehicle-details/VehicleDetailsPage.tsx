@@ -11,11 +11,7 @@ import {
   MessageSquare,
   ShieldCheck,
   Zap,
-  Sparkles,
-  Navigation,
-  Lock,
-  Layers,
-  FileText,
+// unused icon imports removed
   RotateCw,
   Palette,
   Play,
@@ -649,214 +645,168 @@ const VehicleDetailsPage = () => {
           </div>
 
           {/* =========================================================
-              OFFICIAL SUZUKI STYLE FEATURE SHOWCASE & SPECS TABS
+              OFFICIAL SUZUKI DEALER PAGE SECTIONS (FEATURES, SPECS, ACCESSORIES)
              ========================================================= */}
-          <div className="vehicle-feature-tabs-section">
 
-            {/* TAB BUTTONS */}
-            <div className="feature-tabs-bar">
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "highlights" ? "active" : ""}`}
-                onClick={() => setActiveTab("highlights")}
-              >
-                <Sparkles size={18} />
-                Key Features & Highlights
-              </button>
+          {/* SUB NAVIGATION RIBBON */}
+          <div className="official-subnav-ribbon" style={{ display: "flex", justifyContent: "center", gap: "24px", background: "#f8fafc", padding: "14px 24px", borderRadius: "12px", border: "1px solid #e2e8f0", margin: "40px 0 32px 0", flexWrap: "wrap" }}>
+            <button type="button" onClick={() => setActiveTab("highlights")} style={{ background: activeTab === "highlights" ? "#dc2626" : "transparent", color: activeTab === "highlights" ? "#fff" : "#475569", border: "none", padding: "8px 20px", borderRadius: "20px", fontWeight: 700, cursor: "pointer", transition: "all 0.2s ease" }}>
+              Overview & Features
+            </button>
+            <button type="button" onClick={() => setActiveTab("specs")} style={{ background: activeTab === "specs" ? "#dc2626" : "transparent", color: activeTab === "specs" ? "#fff" : "#475569", border: "none", padding: "8px 20px", borderRadius: "20px", fontWeight: 700, cursor: "pointer", transition: "all 0.2s ease" }}>
+              Specifications
+            </button>
+          </div>
 
-              <button
-                type="button"
-                className={`tab-btn ${activeTab === "specs" ? "active" : ""}`}
-                onClick={() => setActiveTab("specs")}
-              >
-                <FileText size={18} />
-                Technical Specifications
-              </button>
-            </div>
+          {/* FEATURES SECTION (OFFICIAL SUZUKI SHOWROOM STYLE) */}
+          {activeTab === "highlights" && (
+            <div className="official-features-section" style={{ marginBottom: "48px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+                <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.5px" }}>FEATURES</h2>
+              </div>
 
-            {/* TAB CONTENT: HIGHLIGHTS */}
-            {activeTab === "highlights" && (
-              <div className="tab-content-panel">
-                <h3>{customFeatures.length > 0 ? "Vehicle Specific Features" : "Key Highlights & Features"}</h3>
-
-                {/* ADMIN CUSTOM FEATURES GRID */}
+              <div className="category-features-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
                 {customFeatures.length > 0 ? (
-                  <div className="category-features-grid">
-                    {customFeatures.map((item, idx) => {
-                      const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
-                      let IconComponent = Sparkles;
-                      let iconColor = "#2563eb";
-                      let bgGradient = "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)";
-
+                  customFeatures.map((item, idx) => {
+                    const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
+                    let featureImg = item.imageUrl || "";
+                    if (!featureImg) {
                       if (text.includes("engine") || text.includes("sep") || text.includes("eass") || text.includes("power") || text.includes("performance")) {
-                        IconComponent = Gauge;
-                        iconColor = "#d97706";
-                        bgGradient = "linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)";
+                        featureImg = isBike ? getImageUrl("/uploads/vehicles/bike_engine_block_1788629360348.jpg") : getImageUrl("/uploads/vehicles/scooter_engine_cvt_1788629571404.jpg");
                       } else if (text.includes("console") || text.includes("bluetooth") || text.includes("navigation") || text.includes("tft") || text.includes("dashboard") || text.includes("connect")) {
-                        IconComponent = Navigation;
-                        iconColor = "#2563eb";
-                        bgGradient = "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)";
+                        featureImg = getImageUrl("/uploads/vehicles/suzuki_digital_tft_console_1788627425512.jpg");
                       } else if (text.includes("storage") || text.includes("boot") || text.includes("usb") || text.includes("glovebox") || text.includes("rack")) {
-                        IconComponent = Layers;
-                        iconColor = "#059669";
-                        bgGradient = "linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)";
-                      } else if (text.includes("abs") || text.includes("brake") || text.includes("lock") || text.includes("safety") || text.includes("stopping")) {
-                        IconComponent = ShieldCheck;
-                        iconColor = "#dc2626";
-                        bgGradient = "linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)";
-                      } else if (text.includes("electric") || text.includes("ev") || text.includes("battery") || text.includes("charging") || text.includes("zero emission")) {
-                        IconComponent = Zap;
-                        iconColor = "#16a34a";
-                        bgGradient = "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)";
-                      } else if (text.includes("foot") || text.includes("bodywork") || text.includes("styling") || text.includes("ergonomics") || text.includes("headlamp") || text.includes("led")) {
-                        IconComponent = Sparkles;
-                        iconColor = "#7c3aed";
-                        bgGradient = "linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)";
+                        featureImg = getImageUrl("/uploads/vehicles/scooter_underseat_storage_1788629750085.jpg");
+                      } else if (text.includes("abs") || text.includes("brake") || text.includes("disc") || text.includes("safety") || text.includes("stopping")) {
+                        featureImg = getImageUrl("/uploads/vehicles/suzuki_abs_disc_brake_1788627388211.jpg");
+                      } else if (text.includes("fuel lid") || text.includes("fuel fill") || text.includes("external fuel") || text.includes("fuel cap")) {
+                        featureImg = getImageUrl("/uploads/vehicles/scooter_fuel_lid_rear_1788629695842.jpg");
+                      } else if (text.includes("seat") || text.includes("comfort") || text.includes("foot") || text.includes("ergonomics")) {
+                        featureImg = getImageUrl("/uploads/vehicles/suzuki_comfort_seat_1788627543364.jpg");
+                      } else if (text.includes("headlamp") || text.includes("led") || text.includes("lamp") || text.includes("styling")) {
+                        featureImg = getImageUrl("/uploads/vehicles/suzuki_led_headlamp_1788627473237.jpg");
+                      } else {
+                        featureImg = activeImage ? getImageUrl(activeImage) : (vehicle.primaryImageUrl ? getImageUrl(vehicle.primaryImageUrl) : "");
                       }
+                    }
 
-                      return (
-                        <div key={idx} className="feature-highlight-card" style={{ background: "#ffffff", borderRadius: "16px", border: "1px solid #e2e8f0", padding: "24px", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-                          <div style={{ width: "52px", height: "52px", borderRadius: "14px", background: bgGradient, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px", color: iconColor }}>
-                            <IconComponent size={26} />
-                          </div>
-                          <h4 style={{ margin: "0 0 8px 0", fontSize: "1.08rem", color: "#0f172a", fontWeight: 700 }}>{item.title}</h4>
-                          <p style={{ margin: 0, color: "#64748b", fontSize: "0.92rem", lineHeight: "1.6" }}>{item.description}</p>
+                    return (
+                      <div key={idx} style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.04)", transition: "transform 0.2s ease" }}>
+                        <div style={{ width: "100%", height: "180px", background: "#0f172a", overflow: "hidden" }}>
+                          <img src={featureImg} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
-                      );
-                    })}
-                  </div>
+                        <div style={{ padding: "20px" }}>
+                          <h3 style={{ margin: "0 0 10px 0", fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.3px" }}>{item.title}</h3>
+                          <p style={{ margin: 0, color: "#475569", fontSize: "0.9rem", lineHeight: "1.6" }}>{item.description}</p>
+                        </div>
+                      </div>
+                    );
+                  })
                 ) : (
-                  /* DEFAULT CATEGORY FEATURES FALLBACK IF NO CUSTOM FEATURES FILLED BY ADMIN */
-                  <div className="category-features-grid">
-                    {!isEV && !isBike && (
-                      <>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><Fuel size={24} /></div>
-                          <h4>Suzuki Eco Performance (SEP)</h4>
-                          <p>Advanced SEP engine technology delivers smooth acceleration while giving superior mileage up to {vehicle.mileage || 52} km/l.</p>
-                        </div>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><Navigation size={24} /></div>
-                          <h4>Bluetooth Digital Console</h4>
-                          <p>Turn-by-turn navigation alerts, incoming call & SMS notifications right on your digital instrument cluster.</p>
-                        </div>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><Layers size={24} /></div>
-                          <h4>21.8L Large Storage</h4>
-                          <p>Spacious underseat storage with convenient front rack & USB mobile charging socket for easy riding.</p>
-                        </div>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><Lock size={24} /></div>
-                          <h4>One-Push Central Locking</h4>
-                          <p>Integrated central locking system with easy ignition start and secure shutter key protection.</p>
-                        </div>
-                      </>
-                    )}
-
-                    {!isEV && isBike && (
-                      <>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><Gauge size={24} /></div>
-                          <h4>Gixxer Performance SEP Engine</h4>
-                          <p>Derived from Suzuki GSX-R racing heritage, offering powerful throttle response and high-speed stability.</p>
-                        </div>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><ShieldCheck size={24} /></div>
-                          <h4>Dual Channel ABS Brakes</h4>
-                          <p>Advanced Anti-Lock Braking System with twin disc brakes for unmatched emergency stopping power and control.</p>
-                        </div>
-                        <div className="feature-highlight-card">
-                          <div className="feature-card-icon"><Sparkles size={24} /></div>
-                          <h4>Aerodynamic Sport Styling</h4>
-                          <p>Aggressive LED headlamp, twin-muffler exhaust, and clip-on handlebars designed for sporty riding dynamics.</p>
-                        </div>
-                      </>
-                    )}
-
-                    {isEV && (
-                      <>
-                        <div className="feature-highlight-card ev-style">
-                          <div className="feature-card-icon"><Zap size={24} /></div>
-                          <h4>Zero Emission Eco Mobility</h4>
-                          <p>100% Electric drivetrain delivering zero carbon emissions with whisper-quiet, smooth acceleration.</p>
-                        </div>
-                        <div className="feature-highlight-card ev-style">
-                          <div className="feature-card-icon"><Sparkles size={24} /></div>
-                          <h4>Fast Charge Battery System</h4>
-                          <p>Advanced Lithium-Ion battery pack with fast-charging technology (0 to 80% in 60 mins).</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-
-                {vehicle.description && (
-                  <div className="full-vehicle-description">
-                    <h4>Description & Overview</h4>
-                    <p>{vehicle.description}</p>
+                  <div style={{ background: "#ffffff", padding: "20px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                    <p style={{ color: "#64748b" }}>Official Suzuki specifications available below.</p>
                   </div>
                 )}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* TAB CONTENT: SPECS TABLE */}
-            {activeTab === "specs" && (
-              <div className="tab-content-panel">
-                <h3>Technical Specifications</h3>
-
-                <table className="specs-detail-table">
+          {/* TECHNICAL SPECIFICATIONS SECTION */}
+          {activeTab === "specs" && (
+            <div className="official-specs-section" style={{ marginBottom: "48px" }}>
+              <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", marginBottom: "24px" }}>TECHNICAL SPECIFICATIONS</h2>
+              
+              <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+                <table className="specs-detail-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                   <tbody>
-                    <tr>
-                      <td>Model & Variant</td>
-                      <td><strong>{vehicle.name} {vehicle.variant || ''}</strong></td>
+                    <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b", width: "40%" }}>Model & Variant</td>
+                      <td style={{ padding: "16px 20px", fontWeight: 700, color: "#0f172a" }}>{vehicle.name} {vehicle.variant || ""}</td>
                     </tr>
-                    <tr>
-                      <td>Vehicle Category</td>
-                      <td><strong>{vehicle.category || (isEV ? 'ELECTRIC' : isBike ? 'BIKE' : 'SCOOTER')}</strong></td>
+                    <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b" }}>Category</td>
+                      <td style={{ padding: "16px 20px", fontWeight: 700, color: "#0f172a" }}>{vehicle.category || (isEV ? "ELECTRIC" : isBike ? "BIKE" : "SCOOTER")}</td>
                     </tr>
                     {vehicle.engineCc && (
-                      <tr>
-                        <td>Engine Displacement</td>
-                        <td><strong>{vehicle.engineCc} cc</strong></td>
+                      <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b" }}>Engine Displacement</td>
+                        <td style={{ padding: "16px 20px", fontWeight: 700, color: "#0f172a" }}>{vehicle.engineCc} cc</td>
                       </tr>
                     )}
                     {vehicle.mileage && (
-                      <tr>
-                        <td>{isEV ? "Battery Range" : "Fuel Efficiency (Mileage)"}</td>
-                        <td><strong>{vehicle.mileage} {isEV ? "km / full charge" : "km/l"}</strong></td>
+                      <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b" }}>{isEV ? "Battery Range" : "Fuel Efficiency"}</td>
+                        <td style={{ padding: "16px 20px", fontWeight: 700, color: "#0f172a" }}>{vehicle.mileage} {isEV ? "km / charge" : "km/l"}</td>
                       </tr>
                     )}
                     {vehicle.fuelType && (
-                      <tr>
-                        <td>Fuel / Power Type</td>
-                        <td><strong>{vehicle.fuelType}</strong></td>
-                      </tr>
-                    )}
-                    {vehicle.transmission && (
-                      <tr>
-                        <td>Transmission Type</td>
-                        <td><strong>{vehicle.transmission}</strong></td>
+                      <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b" }}>Fuel System</td>
+                        <td style={{ padding: "16px 20px", fontWeight: 700, color: "#0f172a" }}>{vehicle.fuelType}</td>
                       </tr>
                     )}
                     {vehicle.color && (
-                      <tr>
-                        <td>Available Color</td>
-                        <td><strong>{vehicle.color}</strong></td>
+                      <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                        <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b" }}>Available Colors</td>
+                        <td style={{ padding: "16px 20px", fontWeight: 700, color: "#0f172a" }}>{vehicle.color}</td>
                       </tr>
                     )}
                     <tr>
-                      <td>Condition</td>
-                      <td><strong>{vehicle.vehicleType === "NEW" ? "Brand New (Official Warranty)" : "Pre-Owned (Quality Checked)"}</strong></td>
-                    </tr>
-                    <tr>
-                      <td>Showroom Location</td>
-                      <td><strong>Shri Hari Suzuki, Guna Showroom</strong></td>
+                      <td style={{ padding: "16px 20px", fontWeight: 600, color: "#64748b" }}>Showroom Location</td>
+                      <td style={{ padding: "16px 20px", fontWeight: 700, color: "#dc2626" }}>Shri Hari Suzuki, Kushmoda Chowki, Guna</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-            )}
+            </div>
+          )}
 
+          {/* OFFICIAL SUZUKI ACCESSORIES SECTION */}
+          <div className="official-accessories-section" style={{ margin: "48px 0" }}>
+            <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", marginBottom: "24px" }}>ACCESSORIES</h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "24px" }}>
+              <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+                <div style={{ width: "100%", height: "160px", background: "#f8fafc" }}>
+                  <img src={getImageUrl("/uploads/vehicles/suzuki_comfort_seat_1788627543364.jpg")} alt="Seat Cover" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div style={{ padding: "16px" }}>
+                  <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>SEAT COVER (DARK BROWN / BLACK)</h4>
+                </div>
+              </div>
+
+              <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+                <div style={{ width: "100%", height: "160px", background: "#f8fafc" }}>
+                  <img src={getImageUrl("/uploads/vehicles/scooter_underseat_storage_1788629750085.jpg")} alt="Floor Mat" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div style={{ padding: "16px" }}>
+                  <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>FLOOR MAT (RED / BLACK)</h4>
+                </div>
+              </div>
+
+              <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 4px 12px rgba(0,0,0,0.04)" }}>
+                <div style={{ width: "100%", height: "160px", background: "#f8fafc" }}>
+                  <img src={getImageUrl("/uploads/vehicles/suzuki_led_headlamp_1788627473237.jpg")} alt="Meter Visor" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div style={{ padding: "16px" }}>
+                  <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>METER VISOR & CHROME GUARD</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* RED DOWNLOAD BROCHURE BUTTON */}
+          <div style={{ textAlign: "center", margin: "40px 0" }}>
+            <a href={`https://wa.me/919425131697?text=${whatsappMessage}`} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", background: "#dc2626", color: "#ffffff", fontWeight: 800, fontSize: "1rem", textTransform: "uppercase", padding: "16px 40px", borderRadius: "8px", textDecoration: "none", letterSpacing: "1px", boxShadow: "0 4px 14px rgba(220,38,38,0.3)" }}>
+              DOWNLOAD BROCHURE
+            </a>
+          </div>
+
+          {/* SHOWROOM FOOTER TITLE */}
+          <div style={{ textAlign: "center", borderTop: "2px solid #e2e8f0", paddingTop: "32px", marginTop: "40px" }}>
+            <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1e3a8a", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              SUZUKI {vehicle.name.toUpperCase()} - SHRI HARI SUZUKI, KUSHMODA CHOWKI, GUNA
+            </h2>
           </div>
 
         </div>
