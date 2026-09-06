@@ -198,7 +198,7 @@ const AdminDashboardPage = () => {
               <strong>
                 {loading ? "—" : stats.totalTestRides}
                 {!loading && stats.pendingTestRides > 0 && (
-                  <span style={{ fontSize: "0.85rem", color: "#f59e0b", marginLeft: "6px" }}>
+                  <span style={{ display: "block", fontSize: "0.75rem", color: "#f59e0b", marginTop: "2px" }}>
                     ({stats.pendingTestRides} pending)
                   </span>
                 )}
@@ -215,7 +215,7 @@ const AdminDashboardPage = () => {
               <strong>
                 {loading ? "—" : stats.totalEnquiries}
                 {!loading && stats.pendingEnquiries > 0 && (
-                  <span style={{ fontSize: "0.85rem", color: "#f59e0b", marginLeft: "6px" }}>
+                  <span style={{ display: "block", fontSize: "0.75rem", color: "#f59e0b", marginTop: "2px" }}>
                     ({stats.pendingEnquiries} pending)
                   </span>
                 )}
@@ -291,7 +291,7 @@ const AdminDashboardPage = () => {
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                   {recentTestRides.map((ride) => (
-                    <div key={ride.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem", borderRadius: "8px", background: "var(--bg-secondary, #f8fafc)", border: "1px solid var(--border-color, #e2e8f0)" }}>
+                    <div key={ride.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", padding: "0.75rem", borderRadius: "8px", background: "var(--bg-secondary, #f8fafc)", border: "1px solid var(--border-color, #e2e8f0)" }}>
                       <div>
                         <strong style={{ display: "block", fontSize: "0.95rem" }}>{ride.customerName}</strong>
                         <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
@@ -328,7 +328,7 @@ const AdminDashboardPage = () => {
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                   {recentEnquiries.map((enquiry) => (
-                    <div key={enquiry.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem", borderRadius: "8px", background: "var(--bg-secondary, #f8fafc)", border: "1px solid var(--border-color, #e2e8f0)" }}>
+                    <div key={enquiry.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem", flexWrap: "wrap", padding: "0.75rem", borderRadius: "8px", background: "var(--bg-secondary, #f8fafc)", border: "1px solid var(--border-color, #e2e8f0)" }}>
                       <div>
                         <strong style={{ display: "block", fontSize: "0.95rem" }}>{enquiry.customerName}</strong>
                         <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
