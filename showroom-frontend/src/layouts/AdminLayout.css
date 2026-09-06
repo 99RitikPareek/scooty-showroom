@@ -307,124 +307,60 @@
    RESPONSIVE
    ========================================================= */
 
-@media (max-width: 1100px) {
+@media (max-width: 992px) {
+  .admin-dashboard-header {
+    padding: 0 16px;
+  }
 
   .admin-header-left,
   .admin-header-actions {
-    width: 180px;
-  }
-
-  .admin-nav-link {
-    padding: 0 11px;
-  }
-}
-
-@media (max-width: 900px) {
-
-  .admin-dashboard-header {
-    padding: 0 20px;
-  }
-
-  .admin-header-left {
     width: auto;
   }
 
-  .admin-main-nav {
-    justify-content: flex-start;
-
-    overflow-x: auto;
-
-    scrollbar-width: none;
-  }
-
-  .admin-main-nav::-webkit-scrollbar {
-    display: none;
-  }
-
   .admin-nav-link {
-    flex-shrink: 0;
-  }
-
-  .admin-header-actions {
-    width: auto;
+    padding: 0 10px;
+    font-size: 11px;
   }
 }
 
-@media (max-width: 700px) {
-
+@media (max-width: 768px) {
   .admin-dashboard-header {
+    height: 64px;
     min-height: 64px;
     padding: 0 14px;
+    justify-content: space-between;
   }
 
   .admin-main-nav {
-    height: 64px;
+    display: none !important;
   }
 
-  .admin-brand-text {
-    display: none;
-  }
-
-  .admin-nav-link {
-    width: 40px;
-    height: 40px;
-
-    padding: 0;
-  }
-
-  .admin-nav-link.active::after {
-    bottom: -12px;
+  .admin-mobile-toggle-btn {
+    display: flex !important;
   }
 
   .admin-profile {
-    padding: 4px;
-    border: 0;
-    background: transparent;
+    display: none !important;
   }
 
-  .admin-profile-info {
-    display: none;
+  .admin-brand-text {
+    display: flex !important;
   }
 
-  .admin-profile-icon {
-    width: 34px;
-    height: 34px;
+  .admin-brand-text strong {
+    font-size: 14px;
   }
 
-  .admin-header-logout {
-    width: 36px;
-    height: 36px;
+  .admin-brand-text span {
+    font-size: 9px;
   }
 
   .admin-layout-content {
     min-height: calc(100vh - 64px);
-
-    padding: 22px 16px 40px;
+    padding: 16px 14px 40px;
   }
 }
 
-@media (max-width: 480px) {
-
-  .admin-dashboard-header {
-    gap: 6px;
-  }
-
-  .admin-header-left {
-    flex-shrink: 0;
-  }
-
-  .admin-main-nav {
-    gap: 2px;
-  }
-
-  .admin-nav-link {
-    width: 36px;
-  }
-
-  .admin-header-actions {
-    gap: 5px;
-  }
-}
 /* =========================================================
    ADMIN TEST RIDES
    ========================================================= */
