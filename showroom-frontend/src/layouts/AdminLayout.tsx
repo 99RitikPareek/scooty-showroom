@@ -48,7 +48,7 @@ const AdminLayout = () => {
 
       {/* ================= HEADER ================= */}
 
-      <header className="admin-dashboard-header">
+      <header className="admin-navbar-header">
 
         {/* ================= BRAND ================= */}
 
