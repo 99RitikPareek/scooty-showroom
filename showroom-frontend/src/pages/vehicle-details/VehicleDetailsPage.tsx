@@ -685,7 +685,28 @@ const VehicleDetailsPage = () => {
                     {customFeatures.map((item, idx) => {
                                             let imgUrl = item.imageUrl || '';
                       if (!imgUrl) {
-                        imgUrl = activeImage ? getImageUrl(activeImage) : (vehicle.primaryImageUrl ? getImageUrl(vehicle.primaryImageUrl) : "");
+                        const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
+                        if (text.includes("exhaust") || text.includes("muffler")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/bike_twin_exhaust_1788629386677.jpg");
+                        } else if (text.includes("engine") || text.includes("sep") || text.includes("power") || text.includes("motor")) {
+                          imgUrl = isBike
+                            ? getImageUrl("/uploads/vehicles/bike_engine_block_1788629360348.jpg")
+                            : getImageUrl("/uploads/vehicles/scooter_engine_cvt_1788629571404.jpg");
+                        } else if (text.includes("abs") || text.includes("brake") || text.includes("disc") || text.includes("stopping")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_abs_disc_brake_1788627388211.jpg");
+                        } else if (text.includes("console") || text.includes("bluetooth") || text.includes("navigation") || text.includes("display") || text.includes("tft") || text.includes("dashboard") || text.includes("connect")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_digital_tft_console_1788627425512.jpg");
+                        } else if (text.includes("fuel lid") || text.includes("fuel fill") || text.includes("external fuel") || text.includes("fueling cap") || text.includes("refueling") || text.includes("fuel cap")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/scooter_fuel_lid_rear_1788629695842.jpg");
+                        } else if (text.includes("storage") || text.includes("boot") || text.includes("glovebox") || text.includes("usb") || text.includes("rack")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/scooter_underseat_storage_1788629750085.jpg");
+                        } else if (text.includes("headlamp") || text.includes("led") || text.includes("light") || text.includes("lamp") || text.includes("fairing")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_led_headlamp_1788627473237.jpg");
+                        } else if (text.includes("seat") || text.includes("comfort") || text.includes("floorboard") || text.includes("ergonomics")) {
+                          imgUrl = getImageUrl("/uploads/vehicles/suzuki_comfort_seat_1788627543364.jpg");
+                        } else {
+                          imgUrl = activeImage ? getImageUrl(activeImage) : (vehicle.primaryImageUrl ? getImageUrl(vehicle.primaryImageUrl) : "");
+                        }
                       }
                       return (
                         <div key={idx} className="feature-highlight-card with-image-card" style={{ background: '#ffffff', overflow: 'hidden', padding: 0 }}>
