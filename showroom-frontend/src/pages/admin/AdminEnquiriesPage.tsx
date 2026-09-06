@@ -1051,7 +1051,7 @@ const AdminEnquiriesPage = () => {
         >
 
           <div
-            className="admin-enquiry-modal"
+            className="admin-modal admin-enquiry-modal"
             onClick={(e) =>
               e.stopPropagation()
             }

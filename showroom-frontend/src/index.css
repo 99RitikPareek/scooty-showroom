@@ -9886,3 +9886,107 @@ select {
     min-width: 180px !important;
   }
 }
+
+
+/* =========================================================
+   ADMIN ENQUIRY MODAL STYLING
+   ========================================================= */
+
+.admin-enquiry-modal {
+  width: 100%;
+  max-width: 620px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+}
+
+.admin-enquiry-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #edf1f6;
+  background: #ffffff;
+}
+
+.admin-enquiry-detail-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-enquiry-detail-grid span {
+  display: block;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-enquiry-detail-grid strong {
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.admin-enquiry-detail-grid a {
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.admin-enquiry-detail-message {
+  padding: 20px 24px;
+  background: #ffffff;
+}
+
+.admin-enquiry-detail-message span {
+  display: block;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.admin-enquiry-detail-message p {
+  margin: 0;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 600px) {
+  .admin-enquiry-detail-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    padding: 16px !important;
+  }
+
+  .admin-enquiry-detail-message {
+    padding: 16px !important;
+  }
+
+  .admin-modal-footer {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .admin-modal-footer .admin-secondary-btn,
+  .admin-modal-footer .admin-primary-btn {
+    width: 100% !important;
+  }
+}
