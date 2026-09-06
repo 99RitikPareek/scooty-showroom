@@ -683,28 +683,9 @@ const VehicleDetailsPage = () => {
                 {customFeatures.length > 0 ? (
                   <div className="category-features-grid">
                     {customFeatures.map((item, idx) => {
-                      const text = ((item.title || '') + ' ' + (item.description || '')).toLowerCase();
-                      let imgUrl = item.imageUrl || '';
+                                            let imgUrl = item.imageUrl || '';
                       if (!imgUrl) {
-                        if (text.includes('exhaust') || text.includes('muffler')) {
-                          imgUrl = '/features/bike-exhaust.jpg';
-                        } else if (text.includes('engine') || text.includes('sep') || text.includes('performance') || text.includes('torque') || text.includes('power')) {
-                          imgUrl = isBike ? '/features/bike-engine.jpg' : '/features/scooter-engine.jpg';
-                        } else if (text.includes('abs') || text.includes('brake') || text.includes('disc') || text.includes('stopping')) {
-                          imgUrl = '/features/abs-brake.jpg';
-                        } else if (text.includes('console') || text.includes('bluetooth') || text.includes('navigation') || text.includes('display') || text.includes('tft') || text.includes('dashboard') || text.includes('connect')) {
-                          imgUrl = '/features/tft-console.jpg';
-                        } else if (text.includes('fuel lid') || text.includes('fuel fill') || text.includes('external fuel') || text.includes('fueling cap') || text.includes('refueling') || text.includes('fuel filling')) {
-                          imgUrl = '/features/scooter-fuel-lid.jpg';
-                        } else if (text.includes('storage') || text.includes('boot') || text.includes('glovebox') || text.includes('usb') || text.includes('rack')) {
-                          imgUrl = '/features/scooter-storage.jpg';
-                        } else if (text.includes('headlamp') || text.includes('led') || text.includes('light') || text.includes('styling') || text.includes('lamp') || text.includes('fairing')) {
-                          imgUrl = '/features/led-headlight.jpg';
-                        } else if (text.includes('seat') || text.includes('comfort') || text.includes('floorboard') || text.includes('posture') || text.includes('ergonomics')) {
-                          imgUrl = '/features/comfort-seat.jpg';
-                        } else {
-                          imgUrl = isBike ? '/features/bike-engine.jpg' : '/features/tft-console.jpg';
-                        }
+                        imgUrl = activeImage ? getImageUrl(activeImage) : (vehicle.primaryImageUrl ? getImageUrl(vehicle.primaryImageUrl) : "");
                       }
                       return (
                         <div key={idx} className="feature-highlight-card with-image-card" style={{ background: '#ffffff', overflow: 'hidden', padding: 0 }}>
