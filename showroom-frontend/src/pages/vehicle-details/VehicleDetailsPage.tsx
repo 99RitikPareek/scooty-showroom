@@ -63,44 +63,88 @@ const VehicleDetailsPage = () => {
 
   const colorGroups: ColorGroup[] = [];
 
-  if (vehicle?.images && vehicle.images.length > 0) {
-    const groupMap = new Map<string, NonNullable<Vehicle['images']>>();
+  if (vehicle) {
+    // 1. Get official admin colors list
+    const adminColors = vehicle.color
+      ? vehicle.color.split(",").map((c) => c.trim()).filter(Boolean)
+      : [];
 
-    vehicle.images.forEach((img) => {
-      let color = "Metallic Triton Blue";
+    const groupMap = new Map<string, NonNullable<Vehicle['images']>>();
+    const allImages = vehicle.images || [];
+
+    // Initialize groupMap for each official color
+    adminColors.forEach((ac) => {
+      groupMap.set(ac, []);
+    });
+
+    // 2. Map each image to an official color
+    allImages.forEach((img) => {
       const alt = (img.altText || "").trim();
-      
+      let matchedColor: string | null = null;
+
       if (alt.includes("Color:")) {
         const parts = alt.split("|");
         const colorPart = parts.find((p) => p.includes("Color:"));
         if (colorPart) {
-          color = colorPart.replace("Color:", "").trim();
+          const rawColor = colorPart.replace("Color:", "").trim();
+          // Find matching admin color
+          matchedColor = adminColors.find(
+            (ac) => ac.toLowerCase() === rawColor.toLowerCase() || rawColor.toLowerCase().includes(ac.toLowerCase()) || ac.toLowerCase().includes(rawColor.toLowerCase())
+          ) || rawColor;
         }
-      } else if (alt) {
-        color = alt;
       }
 
-      if (!groupMap.has(color)) {
-        groupMap.set(color, []);
+      // If altText did not use "Color:", try matching keywords against admin colors
+      if (!matchedColor && alt) {
+        const altLower = alt.toLowerCase();
+        matchedColor = adminColors.find((ac) => {
+          const acLower = ac.toLowerCase();
+          const words = acLower.split(" ").filter((w) => w.length > 3);
+          return words.some((w) => altLower.includes(w));
+        }) || null;
       }
-      groupMap.get(color)!.push(img);
+
+      // Fallback to first admin color or raw color
+      if (!matchedColor) {
+        matchedColor = adminColors[0] || "Standard Variant";
+      }
+
+      if (!groupMap.has(matchedColor)) {
+        groupMap.set(matchedColor, []);
+      }
+      groupMap.get(matchedColor)!.push(img);
     });
 
-    // Also parse vehicle.color string set by Admin (e.g. "Solid Ice Green, Metallic Mat Stellar Blue, Pearl Grace White")
-    if (vehicle?.color) {
-      const adminColors = vehicle.color.split(",").map(c => c.trim()).filter(Boolean);
-      adminColors.forEach(ac => {
-        if (!groupMap.has(ac)) {
-          // If no image explicitly mapped, attach fallback vehicle images
-          groupMap.set(ac, vehicle.images || []);
-        }
-      });
-    }
+    // If an official color group has no images mapped, attach fallback
+    groupMap.forEach((imgs, cName) => {
+      if (imgs.length === 0 && allImages.length > 0) {
+        // Try to filter allImages by color keyword
+        const cLower = cName.toLowerCase();
+        const filtered = allImages.filter((img) => {
+          const aLower = (img.altText || "").toLowerCase();
+          return cLower.split(" ").some((w) => w.length > 3 && aLower.includes(w));
+        });
+        groupMap.set(cName, filtered.length > 0 ? filtered : allImages);
+      }
+    });
 
+    // 3. Build colorGroups list with swatches
     groupMap.forEach((imgs, colorName) => {
+      // Sort images by angle
+      imgs.sort((a, b) => {
+        const getAngle = (alt?: string) => {
+          if (!alt) return 0;
+          const match = alt.match(/Angle:\s*(\d+)/i);
+          return match ? parseInt(match[1], 10) : (a.displayOrder || 0);
+        };
+        return getAngle(a.altText || undefined) - getAngle(b.altText || undefined);
+      });
+
       let swatch = "#3b82f6";
       const lower = colorName.toLowerCase();
-      if (lower.includes("red") && (lower.includes("gray") || lower.includes("grey"))) {
+      if (lower.includes("blue") && lower.includes("white") || (lower.includes("white") && lower.includes("stellar")) || lower.includes("glacier")) {
+        swatch = "linear-gradient(135deg, #ffffff 50%, #2563eb 50%)";
+      } else if (lower.includes("red") && (lower.includes("gray") || lower.includes("grey"))) {
         swatch = "linear-gradient(135deg, #dc2626 50%, #4b5563 50%)";
       } else if (lower.includes("orange")) {
         swatch = lower.includes("black") ? "linear-gradient(135deg, #f97316 50%, #111827 50%)" : "#f97316";
@@ -112,16 +156,12 @@ const VehicleDetailsPage = () => {
         swatch = "#fef08a";
       } else if (lower.includes("bronze")) {
         swatch = "linear-gradient(135deg, #92400e 50%, #78350f 50%)";
-      } else if (lower.includes("blue") && lower.includes("white") || (lower.includes("white") && lower.includes("stellar")) || lower.includes("glacier")) {
-        swatch = "linear-gradient(135deg, #ffffff 50%, #2563eb 50%)";
       } else if (lower.includes("black")) {
         swatch = "linear-gradient(135deg, #111827 50%, #374151 50%)";
       } else if (lower.includes("blue") || lower.includes("triton") || lower.includes("stellar")) {
         swatch = "#2563eb";
-      } else if (lower.includes("white")) {
+      } else if (lower.includes("white") || lower.includes("mirage")) {
         swatch = "#ffffff";
-      } else if (lower.includes("blue") || lower.includes("triton") || lower.includes("stellar")) {
-        swatch = "#2563eb";
       } else if (lower.includes("red") || lower.includes("mira")) {
         swatch = "#dc2626";
       } else if (lower.includes("gray") || lower.includes("grey") || lower.includes("fibroin")) {
